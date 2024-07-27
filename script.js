@@ -9,7 +9,7 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
     }
 
     try {
-        const response = await fetch('https://script.google.com/macros/s/AKfycbxN5ftHI2TTOk6R3uo-FW4l2OmjHRubXO32F5wa5aliqDWu_vI6Cv5O1rLip488uAvWQw/exec', {
+        const response = await fetch('https://script.google.com/macros/s/AKfycbyy2AvIFIE182impu0Rfg60SlMwrOFmNprAYy9vptIX7CHMfc3u6XLdVRt-UplGBERb-g/exec', {
             method: 'POST',
             body: JSON.stringify({ fullName, phoneNumber }),
             headers: {
