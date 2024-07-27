@@ -3,23 +3,43 @@ document.getElementById('registrationForm').addEventListener('submit', function 
     const fullName = document.getElementById('fullName').value;
     const phoneNumber = document.getElementById('phoneNumber').value;
 
-    fetch('https://script.google.com/macros/s/AKfycbzlp4-YqmAwEU7g4fxOH2lxX9Y0g0m51FdxPs8Ov5p9q3zvwWZXL95d9DFEQ8oinE9k2g/exec', {
-        method: 'POST',
-        body: JSON.stringify({ fullName, phoneNumber }),
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.exists) {
-            generatePDF(fullName, phoneNumber, data.code, false);
+    checkPhoneNumber(phoneNumber).then(existingCode => {
+        if (existingCode) {
+            generatePDF(fullName, phoneNumber, existingCode, false);
         } else {
-            generatePDF(fullName, phoneNumber, data.code, true);
+            const newCode = generateNewCode();
+            saveUserInfo(fullName, phoneNumber, newCode).then(() => {
+                generatePDF(fullName, phoneNumber, newCode, true);
+            });
         }
-    })
-    .catch(error => console.error('Error:', error));
+    });
 });
+
+function checkPhoneNumber(phoneNumber) {
+    return fetch(`https://script.google.com/macros/s/AKfycbzw1oetgdWIgVPcqdntsqMyWisnUXL2wQG7HoT4NbICP8nXEda7GM10llcqXf6qX2HT7w/exec?phone=${phoneNumber}`)
+        .then(response => response.json())
+        .then(data => data.code);
+}
+
+function generateNewCode() {
+    // This function should generate a unique 4-digit code.
+    // For simplicity, this example increments from 1001 stored in the browser.
+    const lastCode = localStorage.getItem('lastCode') || 1000;
+    const newCode = parseInt(lastCode) + 1;
+    localStorage.setItem('lastCode', newCode);
+    return newCode;
+}
+
+function saveUserInfo(fullName, phoneNumber, code) {
+    return fetch('https://script.google.com/macros/s/AKfycbzw1oetgdWIgVPcqdntsqMyWisnUXL2wQG7HoT4NbICP8nXEda7GM10llcqXf6qX2HT7w/exec/exec', {
+        method: 'POST',
+        body: new URLSearchParams({
+            'full-name': fullName,
+            'phone-number': phoneNumber,
+            'code': code
+        })
+    }).then(response => response.json());
+}
 
 function generatePDF(fullName, phoneNumber, code, isNew) {
     const { jsPDF } = window.jspdf;
