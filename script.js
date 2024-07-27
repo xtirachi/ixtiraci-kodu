@@ -9,7 +9,7 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
     }
 
     try {
-        const response = await fetch('https://script.google.com/macros/s/AKfycbyy2AvIFIE182impu0Rfg60SlMwrOFmNprAYy9vptIX7CHMfc3u6XLdVRt-UplGBERb-g/exec', {
+        const response = await fetch('https://script.google.com/macros/s/AKfycby7Wholy6lagfaAK8QXt036B9nhMVYUdVaGpiY3KJ6noVl4vPCVdrkcx_Rt3XbWD03MqQ/exec', {
             method: 'POST',
             body: JSON.stringify({ fullName, phoneNumber }),
             headers: {
@@ -18,7 +18,12 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
         });
 
         const data = await response.json();
-        generatePDF(data);
+
+        if (data.error) {
+            alert(data.error);
+        } else {
+            generatePDF(data);
+        }
     } catch (error) {
         alert('Xəta baş verdi. Zəhmət olmasa, bir daha cəhd edin.');
         console.error('Error:', error);
