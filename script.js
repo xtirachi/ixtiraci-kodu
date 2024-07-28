@@ -1,60 +1,129 @@
-// script.js
-document.getElementById('registrationForm').addEventListener('submit', async function(event) {
-    event.preventDefault();
-    
+document.getElementById('registrationForm').addEventListener('submit', function (e) {
+    e.preventDefault();
     const fullName = document.getElementById('fullName').value;
     const phoneNumber = document.getElementById('phoneNumber').value;
-    
-    try {
-        // Check if phone number exists
-        let response = await fetch(`https://script.google.com/macros/s/AKfycby0cFYR3gXl8CxEv_22nlbjLINEipHS2UwWWdjxd3PBlfd__UjE3GIwx-vjhCpFVNjYsA/exec?phone=${phoneNumber}`);
-        let data = await response.json();
-        
-        if (data.exists) {
-            // Phone number exists, fetch existing code
-            generatePDF(fullName, phoneNumber, data.code);
+
+    checkPhoneNumber(phoneNumber).then(existingCode => {
+        if (existingCode) {
+            generateAndDisplayPDF(fullName, phoneNumber, existingCode, false);
         } else {
-            // Phone number does not exist, fetch latest code and save new data
-            response = await fetch(`https://script.google.com/macros/s/AKfycby0cFYR3gXl8CxEv_22nlbjLINEipHS2UwWWdjxd3PBlfd__UjE3GIwx-vjhCpFVNjYsA/exec?latest=true`);
-            data = await response.json();
-            
-            const newCode = data.latestCode + 1;
-            await fetch(`https://script.google.com/macros/s/AKfycby0cFYR3gXl8CxEv_22nlbjLINEipHS2UwWWdjxd3PBlfd__UjE3GIwx-vjhCpFVNjYsA/exec`, {
-                method: 'POST',
-                body: JSON.stringify({ fullName, phoneNumber, code: newCode }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+            getLatestCode().then(latestCode => {
+                const newCode = latestCode + 1;
+                saveUserInfo(fullName, phoneNumber, newCode).then(() => {
+                    generateAndDisplayPDF(fullName, phoneNumber, newCode, true);
+                });
+            }).catch(error => {
+                console.error('Error getting latest code:', error);
             });
-            
-            generatePDF(fullName, phoneNumber, newCode);
         }
-    } catch (error) {
-        console.error('Error:', error);
-    }
+    }).catch(error => {
+        console.error('Error checking phone number:', error);
+    });
 });
 
-function generatePDF(fullName, phoneNumber, code) {
+function checkPhoneNumber(phoneNumber) {
+    return fetch(`https://script.google.com/macros/s/AKfycbwWfUkH_f65mJL2x6isZeEVP2q6zDGSfLb74YZVQIVX5wxvC_MLkJvZyNP4adJJirRd7A/exec?phone=${phoneNumber}`)
+        .then(response => response.json())
+        .then(data => data.code);
+}
+
+function getLatestCode() {
+    return fetch(`https://script.google.com/macros/s/AKfycbwWfUkH_f65mJL2x6isZeEVP2q6zDGSfLb74YZVQIVX5wxvC_MLkJvZyNP4adJJirRd7A/exec?latest=true`)
+        .then(response => response.json())
+        .then(data => data.latestCode);
+}
+
+function saveUserInfo(fullName, phoneNumber, code) {
+    const currentDate = new Date().toLocaleDateString();
+    return fetch('https://script.google.com/macros/s/AKfycbwWfUkH_f65mJL2x6isZeEVP2q6zDGSfLb74YZVQIVX5wxvC_MLkJvZyNP4adJJirRd7A/exec', {
+        method: 'POST',
+        body: new URLSearchParams({
+            'full-name': fullName,
+            'phone-number': phoneNumber,
+            'code': code,
+            'date': currentDate
+        })
+    }).then(response => response.json()).catch(error => {
+        console.error('Error saving user info:', error);
+    });
+}
+
+function generateAndDisplayPDF(fullName, phoneNumber, code, isNew) {
+    const logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAA..'; // truncated base64 string for example
+
     const docDefinition = {
         content: [
-            { text: 'User Information', style: 'header' },
-            `Full Name: ${fullName}`,
-            `Phone Number: ${phoneNumber}`,
-            `Code: ${code}`
+            {
+                image: logoBase64,
+                width: 50,
+                alignment: 'right'
+            },
+            {
+                text: 'UAV OPERATORS CERTIFICATE',
+                style: 'header'
+            },
+            {
+                text: 'UNITED STATES OF AMERICA',
+                style: 'subheader'
+            },
+            {
+                text: `UAVID-${code}`,
+                style: 'code'
+            },
+            {
+                columns: [
+                    {
+                        width: '*',
+                        text: [
+                            { text: 'First: ', bold: true },
+                            fullName.split(' ')[0] || '',
+                            '\n',
+                            { text: 'Last: ', bold: true },
+                            fullName.split(' ')[1] || '',
+                            '\n',
+                            { text: 'Phone: ', bold: true },
+                            phoneNumber,
+                            '\n',
+                            { text: 'İxtiraçı kodu: ', bold: true },
+                            code
+                        ]
+                    },
+                    {
+                        width: 50,
+                        image: logoBase64,
+                        alignment: 'right'
+                    }
+                ]
+            },
+            {
+                text: isNew
+                    ? 'İxtiraçılar klubuna xoş gəldin! Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.'
+                    : 'Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.',
+                style: 'message'
+            }
         ],
         styles: {
-            header: {
-                fontSize: 18,
-                bold: true
-            }
+            header: { fontSize: 18, bold: true },
+            subheader: { fontSize: 14, margin: [0, 0, 0, 10] },
+            code: { fontSize: 12, color: 'red', margin: [0, 0, 0, 20] },
+            message: { fontSize: 10, margin: [0, 20, 0, 0] }
         }
     };
-    
-    pdfMake.createPdf(docDefinition).getBlob(function(blob) {
-        const url = URL.createObjectURL(blob);
-        const iframe = document.getElementById('pdfFrame');
-        iframe.src = url;
-        iframe.style.display = 'block';
-        window.open(url, '_blank');
+
+    const resultContainer = document.getElementById('pdf-viewer');
+    resultContainer.innerHTML = ''; // Clear previous result
+
+    pdfMake.createPdf(docDefinition).getDataUrl((dataUrl) => {
+        if (dataUrl) {
+            console.log('PDF Data URL:', dataUrl); // Debugging log
+            const iframe = document.createElement('iframe');
+            iframe.src = dataUrl;
+            resultContainer.appendChild(iframe);
+            document.getElementById('result').classList.remove('hidden');
+        } else {
+            console.error('Error generating PDF data URL.');
+        }
+    }).catch(error => {
+        console.error('Error generating PDF:', error);
     });
 }
