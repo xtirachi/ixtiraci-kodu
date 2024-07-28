@@ -12,8 +12,6 @@ document.getElementById('registrationForm').addEventListener('submit', function 
                 saveUserInfo(fullName, phoneNumber, newCode).then(() => {
                     generateAndDisplayPDF(fullName, phoneNumber, newCode, true);
                 });
-            }).catch(error => {
-                console.error('Error getting latest code:', error);
             });
         }
     }).catch(error => {
@@ -22,20 +20,20 @@ document.getElementById('registrationForm').addEventListener('submit', function 
 });
 
 function checkPhoneNumber(phoneNumber) {
-    return fetch(`https://script.google.com/macros/s/AKfycbymFqUNN7ldPdbcoAMCghVypT2vtF_6si2nkAnfj7pRAUJWW-UKDE1ejXXGJ0OwTaZALw/exec?phone=${phoneNumber}`)
+    return fetch(`hhttps://script.google.com/macros/s/AKfycbzPC57CyDQDdzYHgLghK6OQM7DH3i0PDArPpwOJvcr51Vdx1OP_gsfEr96YW36qnXA82A/exec?phone=${phoneNumber}`)
         .then(response => response.json())
         .then(data => data.code);
 }
 
 function getLatestCode() {
-    return fetch(`https://script.google.com/macros/s/AKfycbymFqUNN7ldPdbcoAMCghVypT2vtF_6si2nkAnfj7pRAUJWW-UKDE1ejXXGJ0OwTaZALw/exec?latest=true`)
+    return fetch(`https://script.google.com/macros/s/AKfycbzPC57CyDQDdzYHgLghK6OQM7DH3i0PDArPpwOJvcr51Vdx1OP_gsfEr96YW36qnXA82A/exec?latest=true`)
         .then(response => response.json())
         .then(data => data.latestCode);
 }
 
 function saveUserInfo(fullName, phoneNumber, code) {
     const currentDate = new Date().toLocaleDateString();
-    return fetch('https://script.google.com/macros/s/AKfycbymFqUNN7ldPdbcoAMCghVypT2vtF_6si2nkAnfj7pRAUJWW-UKDE1ejXXGJ0OwTaZALw/exec', {
+    return fetch('https://script.google.com/macros/s/AKfycbzPC57CyDQDdzYHgLghK6OQM7DH3i0PDArPpwOJvcr51Vdx1OP_gsfEr96YW36qnXA82A/exec', {
         method: 'POST',
         body: new URLSearchParams({
             'full-name': fullName,
@@ -49,12 +47,10 @@ function saveUserInfo(fullName, phoneNumber, code) {
 }
 
 function generateAndDisplayPDF(fullName, phoneNumber, code, isNew) {
-    const logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAA..'; // truncated base64 string for example
-
     const docDefinition = {
         content: [
             {
-                image: logoBase64,
+                image: 'https://i.ibb.co/7XNQPGC/logo.png',
                 width: 50,
                 alignment: 'right'
             },
@@ -90,7 +86,7 @@ function generateAndDisplayPDF(fullName, phoneNumber, code, isNew) {
                     },
                     {
                         width: 50,
-                        image: logoBase64,
+                        image: 'https://via.placeholder.com/50',
                         alignment: 'right'
                     }
                 ]
@@ -120,6 +116,13 @@ function generateAndDisplayPDF(fullName, phoneNumber, code, isNew) {
             iframe.src = dataUrl;
             resultContainer.appendChild(iframe);
             document.getElementById('result').classList.remove('hidden');
+
+            // Show download button and set up download action
+            const downloadBtn = document.getElementById('downloadBtn');
+            downloadBtn.classList.remove('hidden');
+            downloadBtn.onclick = function() {
+                pdfMake.createPdf(docDefinition).download('ixtiraçi_kodu.pdf');
+            };
         } else {
             console.error('Error generating PDF data URL.');
         }
