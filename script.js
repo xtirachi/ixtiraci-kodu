@@ -22,20 +22,20 @@ document.getElementById('registrationForm').addEventListener('submit', function 
 });
 
 function checkPhoneNumber(phoneNumber) {
-    return fetch(`https://script.google.com/macros/s/AKfycbwWfUkH_f65mJL2x6isZeEVP2q6zDGSfLb74YZVQIVX5wxvC_MLkJvZyNP4adJJirRd7A/exec?phone=${phoneNumber}`)
+    return fetch(`https://script.google.com/macros/s/AKfycbymFqUNN7ldPdbcoAMCghVypT2vtF_6si2nkAnfj7pRAUJWW-UKDE1ejXXGJ0OwTaZALw/exec?phone=${phoneNumber}`)
         .then(response => response.json())
         .then(data => data.code);
 }
 
 function getLatestCode() {
-    return fetch(`https://script.google.com/macros/s/AKfycbwWfUkH_f65mJL2x6isZeEVP2q6zDGSfLb74YZVQIVX5wxvC_MLkJvZyNP4adJJirRd7A/exec?latest=true`)
+    return fetch(`https://script.google.com/macros/s/AKfycbymFqUNN7ldPdbcoAMCghVypT2vtF_6si2nkAnfj7pRAUJWW-UKDE1ejXXGJ0OwTaZALw/exec?latest=true`)
         .then(response => response.json())
         .then(data => data.latestCode);
 }
 
 function saveUserInfo(fullName, phoneNumber, code) {
     const currentDate = new Date().toLocaleDateString();
-    return fetch('https://script.google.com/macros/s/AKfycbwWfUkH_f65mJL2x6isZeEVP2q6zDGSfLb74YZVQIVX5wxvC_MLkJvZyNP4adJJirRd7A/exec', {
+    return fetch('https://script.google.com/macros/s/AKfycbymFqUNN7ldPdbcoAMCghVypT2vtF_6si2nkAnfj7pRAUJWW-UKDE1ejXXGJ0OwTaZALw/exec', {
         method: 'POST',
         body: new URLSearchParams({
             'full-name': fullName,
