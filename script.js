@@ -40,62 +40,75 @@ function saveUserInfo(fullName, phoneNumber, code) {
 }
 
 function generatePDF(fullName, phoneNumber, code, isNew) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF('landscape');
+    const docDefinition = {
+        content: [
+            {
+                image: 'https://i.ibb.co/7XNQPGC/logo.png',
+                width: 50,
+                alignment: 'right'
+            },
+            {
+                text: 'UAV OPERATORS CERTIFICATE',
+                style: 'header'
+            },
+            {
+                text: 'UNITED STATES OF AMERICA',
+                style: 'subheader'
+            },
+            {
+                text: `UAVID-${code}`,
+                style: 'code'
+            },
+            {
+                columns: [
+                    {
+                        width: '*',
+                        text: [
+                            { text: 'First: ', bold: true },
+                            fullName.split(' ')[0] || '',
+                            '\n',
+                            { text: 'Last: ', bold: true },
+                            fullName.split(' ')[1] || '',
+                            '\n',
+                            { text: 'Phone: ', bold: true },
+                            phoneNumber,
+                            '\n',
+                            { text: 'İxtiraçı kodu: ', bold: true },
+                            code
+                        ]
+                    },
+                    {
+                        width: 50,
+                        image: 'https://via.placeholder.com/50',
+                        alignment: 'right'
+                    }
+                ]
+            },
+            {
+                text: isNew
+                    ? 'İxtiraçılar klubuna xoş gəldin! Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.'
+                    : 'Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.',
+                style: 'message'
+            }
+        ],
+        styles: {
+            header: { fontSize: 18, bold: true },
+            subheader: { fontSize: 14, margin: [0, 0, 0, 10] },
+            code: { fontSize: 12, color: 'red', margin: [0, 0, 0, 20] },
+            message: { fontSize: 10, margin: [0, 20, 0, 0] }
+        }
+    };
 
-    // Background and border
-    doc.setFillColor(255, 255, 255);
-    doc.rect(0, 0, 297, 210, 'F'); // A4 landscape size
+    const resultContainer = document.getElementById('pdf-viewer');
+    resultContainer.innerHTML = ''; // Clear previous result
 
-    // Add the logo
-    doc.addImage('https://i.ibb.co/7XNQPGC/logo.png', 'PNG', 250, 10, 35, 35);
+    pdfMake.createPdf(docDefinition).getDataUrl((dataUrl) => {
+        const iframe = document.createElement('iframe');
+        iframe.src = dataUrl;
+        iframe.className = 'w-full h-96';
+        resultContainer.appendChild(iframe);
+        document.getElementById('result').classList.remove('hidden');
+    });
 
-    // Add user information
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(16);
-    doc.text('UAV OPERATORS CERTIFICATE', 15, 20);
-    doc.setFontSize(12);
-    doc.setFont(undefined, 'normal');
-    doc.text('UNITED STATES OF AMERICA', 15, 28);
-
-    // Add red text
-    doc.setTextColor(255, 0, 0);
-    doc.setFontSize(14);
-    doc.text(`UAVID-${code}`, 15, 38);
-
-    // Add blue text
-    doc.setTextColor(0, 0, 255);
-    doc.setFontSize(10);
-    doc.text('First', 15, 50);
-    doc.text('Last', 55, 50);
-
-    // Reset text color to black
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(12);
-    doc.text(fullName, 15, 60); // Assuming fullName contains both first and last name
-
-    doc.text(`Telefon nömrəsi: ${phoneNumber}`, 15, 70);
-    doc.text(`İxtiraçı kodu: ${code}`, 15, 80);
-
-    // Add the welcome message
-    doc.setFontSize(10);
-    const message = isNew
-        ? 'İxtiraçılar klubuna xoş gəldin! Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.'
-        : 'Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.';
-    doc.text(message, 15, 90, { maxWidth: 260 });
-
-    // Add photo placeholder or user's photo if available
-    // For this example, we'll use a placeholder image
-    doc.addImage('https://via.placeholder.com/50', 'PNG', 250, 50, 35, 45);
-
-    // Open PDF in new tab for mobile devices
-    const pdfOutput = doc.output('blob');
-    const pdfURL = URL.createObjectURL(pdfOutput);
-    const link = document.createElement('a');
-    link.href = pdfURL;
-    link.target = '_blank';
-    link.download = 'ixtiraçi_kodu.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    pdfMake.createPdf(docDefinition).download('ixtiraçi_kodu.pdf'); // Enable download on mobile
 }
