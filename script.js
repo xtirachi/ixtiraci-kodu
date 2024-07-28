@@ -12,6 +12,8 @@ document.getElementById('registrationForm').addEventListener('submit', function 
                 generateAndDisplayPDF(fullName, phoneNumber, newCode, true);
             });
         }
+    }).catch(error => {
+        console.error('Error checking phone number:', error);
     });
 });
 
@@ -38,7 +40,9 @@ function saveUserInfo(fullName, phoneNumber, code) {
             'code': code,
             'date': currentDate
         })
-    }).then(response => response.json());
+    }).then(response => response.json()).catch(error => {
+        console.error('Error saving user info:', error);
+    });
 }
 
 function generateAndDisplayPDF(fullName, phoneNumber, code, isNew) {
@@ -105,10 +109,17 @@ function generateAndDisplayPDF(fullName, phoneNumber, code, isNew) {
     resultContainer.innerHTML = ''; // Clear previous result
 
     pdfMake.createPdf(docDefinition).getDataUrl((dataUrl) => {
-        const iframe = document.createElement('iframe');
-        iframe.src = dataUrl;
-        resultContainer.appendChild(iframe);
-        document.getElementById('result').classList.remove('hidden');
+        if (dataUrl) {
+            console.log('PDF Data URL:', dataUrl); // Debugging log
+            const iframe = document.createElement('iframe');
+            iframe.src = dataUrl;
+            resultContainer.appendChild(iframe);
+            document.getElementById('result').classList.remove('hidden');
+        } else {
+            console.error('Error generating PDF data URL.');
+        }
+    }).catch(error => {
+        console.error('Error generating PDF:', error);
     });
 
     pdfMake.createPdf(docDefinition).download('ixtiraçi_kodu.pdf'); // Enable download on mobile
