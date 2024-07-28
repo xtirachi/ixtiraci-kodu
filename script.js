@@ -1,7 +1,4 @@
 
-
-
-    <script>
         document.getElementById('registrationForm').addEventListener('submit', function (e) {
             e.preventDefault();
             const fullName = document.getElementById('fullName').value;
@@ -77,4 +74,3 @@
             link.click();
             document.body.removeChild(link);
         }
-    </script>
