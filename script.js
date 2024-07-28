@@ -7,9 +7,11 @@ document.getElementById('registrationForm').addEventListener('submit', function 
         if (existingCode) {
             generateAndDisplayPDF(fullName, phoneNumber, existingCode, false);
         } else {
-            const newCode = generateNewCode();
-            saveUserInfo(fullName, phoneNumber, newCode).then(() => {
-                generateAndDisplayPDF(fullName, phoneNumber, newCode, true);
+            getLatestCode().then(latestCode => {
+                const newCode = latestCode + 1;
+                saveUserInfo(fullName, phoneNumber, newCode).then(() => {
+                    generateAndDisplayPDF(fullName, phoneNumber, newCode, true);
+                });
             });
         }
     }).catch(error => {
@@ -18,21 +20,20 @@ document.getElementById('registrationForm').addEventListener('submit', function 
 });
 
 function checkPhoneNumber(phoneNumber) {
-    return fetch(`https://script.google.com/macros/s/AKfycbxnoFBUanaWq6-1nAEOk9DGeVDHx0Z-RNN_GPzVp2cLI_QjFpGFNTRtCdez10eEdauUkw/exec?phone=${phoneNumber}`)
+    return fetch(`https://script.google.com/macros/s/AKfycbzDsM67CKYBZkNwf4cYMvUjtncb8OerLZvdzVpXCIEuKHP-5Q7Ir-SOVTbbROnDoKJnPw/exec?phone=${phoneNumber}`)
         .then(response => response.json())
         .then(data => data.code);
 }
 
-function generateNewCode() {
-    const lastCode = localStorage.getItem('lastCode') || 1000;
-    const newCode = parseInt(lastCode) + 1;
-    localStorage.setItem('lastCode', newCode);
-    return newCode;
+function getLatestCode() {
+    return fetch(`https://script.google.com/macros/s/AKfycbzDsM67CKYBZkNwf4cYMvUjtncb8OerLZvdzVpXCIEuKHP-5Q7Ir-SOVTbbROnDoKJnPw/exec?latest=true`)
+        .then(response => response.json())
+        .then(data => data.latestCode);
 }
 
 function saveUserInfo(fullName, phoneNumber, code) {
     const currentDate = new Date().toLocaleDateString();
-    return fetch('https://script.google.com/macros/s/AKfycbxnoFBUanaWq6-1nAEOk9DGeVDHx0Z-RNN_GPzVp2cLI_QjFpGFNTRtCdez10eEdauUkw/exec', {
+    return fetch('https://script.google.com/macros/s/AKfycbzDsM67CKYBZkNwf4cYMvUjtncb8OerLZvdzVpXCIEuKHP-5Q7Ir-SOVTbbROnDoKJnPw/exec', {
         method: 'POST',
         body: new URLSearchParams({
             'full-name': fullName,
@@ -46,10 +47,6 @@ function saveUserInfo(fullName, phoneNumber, code) {
 }
 
 function generateAndDisplayPDF(fullName, phoneNumber, code, isNew) {
-    const names = fullName.split(' ');
-    const firstName = names[0] || '';
-    const lastName = names.slice(1).join(' ') || '';
-
     const docDefinition = {
         content: [
             {
@@ -75,10 +72,10 @@ function generateAndDisplayPDF(fullName, phoneNumber, code, isNew) {
                         width: '*',
                         text: [
                             { text: 'First: ', bold: true },
-                            firstName,
+                            fullName.split(' ')[0] || '',
                             '\n',
                             { text: 'Last: ', bold: true },
-                            lastName,
+                            fullName.split(' ')[1] || '',
                             '\n',
                             { text: 'Phone: ', bold: true },
                             phoneNumber,
@@ -110,21 +107,21 @@ function generateAndDisplayPDF(fullName, phoneNumber, code, isNew) {
     };
 
     const resultContainer = document.getElementById('pdf-viewer');
-    if (resultContainer) {
-        resultContainer.innerHTML = ''; // Clear previous result
+    resultContainer.innerHTML = ''; // Clear previous result
 
-        pdfMake.createPdf(docDefinition).getDataUrl((dataUrl) => {
+    pdfMake.createPdf(docDefinition).getDataUrl((dataUrl) => {
+        if (dataUrl) {
+            console.log('PDF Data URL:', dataUrl); // Debugging log
             const iframe = document.createElement('iframe');
             iframe.src = dataUrl;
             resultContainer.appendChild(iframe);
-            const resultElement = document.getElementById('result');
-            if (resultElement) {
-                resultElement.classList.remove('hidden');
-            }
-        });
+            document.getElementById('result').classList.remove('hidden');
+        } else {
+            console.error('Error generating PDF data URL.');
+        }
+    }).catch(error => {
+        console.error('Error generating PDF:', error);
+    });
 
-        pdfMake.createPdf(docDefinition).download('ixtiraçi_kodu.pdf'); // Enable download on mobile
-    } else {
-        console.error('Result container element not found');
-    }
+    pdfMake.createPdf(docDefinition).open(); // Open PDF in new tab
 }
