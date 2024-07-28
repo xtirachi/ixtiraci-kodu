@@ -18,7 +18,7 @@ document.getElementById('registrationForm').addEventListener('submit', function 
 });
 
 function checkPhoneNumber(phoneNumber) {
-    return fetch(`https://script.google.com/macros/s/AKfycbyqxvsauGphjXqwr-NQJBJlrolvd44kKkZH4VMCaNtA8ASUw7KEj_0Sn7vkbO8z1Jp5EA/exec?phone=${phoneNumber}`)
+    return fetch(`https://script.google.com/macros/s/AKfycbxnoFBUanaWq6-1nAEOk9DGeVDHx0Z-RNN_GPzVp2cLI_QjFpGFNTRtCdez10eEdauUkw/exec?phone=${phoneNumber}`)
         .then(response => response.json())
         .then(data => data.code);
 }
@@ -32,7 +32,7 @@ function generateNewCode() {
 
 function saveUserInfo(fullName, phoneNumber, code) {
     const currentDate = new Date().toLocaleDateString();
-    return fetch('https://script.google.com/macros/s/AKfycbyqxvsauGphjXqwr-NQJBJlrolvd44kKkZH4VMCaNtA8ASUw7KEj_0Sn7vkbO8z1Jp5EA/exec', {
+    return fetch('https://script.google.com/macros/s/AKfycbxnoFBUanaWq6-1nAEOk9DGeVDHx0Z-RNN_GPzVp2cLI_QjFpGFNTRtCdez10eEdauUkw/exec', {
         method: 'POST',
         body: new URLSearchParams({
             'full-name': fullName,
@@ -46,6 +46,10 @@ function saveUserInfo(fullName, phoneNumber, code) {
 }
 
 function generateAndDisplayPDF(fullName, phoneNumber, code, isNew) {
+    const names = fullName.split(' ');
+    const firstName = names[0] || '';
+    const lastName = names.slice(1).join(' ') || '';
+
     const docDefinition = {
         content: [
             {
@@ -71,10 +75,10 @@ function generateAndDisplayPDF(fullName, phoneNumber, code, isNew) {
                         width: '*',
                         text: [
                             { text: 'First: ', bold: true },
-                            fullName.split(' ')[0] || '',
+                            firstName,
                             '\n',
                             { text: 'Last: ', bold: true },
-                            fullName.split(' ')[1] || '',
+                            lastName,
                             '\n',
                             { text: 'Phone: ', bold: true },
                             phoneNumber,
@@ -106,21 +110,21 @@ function generateAndDisplayPDF(fullName, phoneNumber, code, isNew) {
     };
 
     const resultContainer = document.getElementById('pdf-viewer');
-    resultContainer.innerHTML = ''; // Clear previous result
+    if (resultContainer) {
+        resultContainer.innerHTML = ''; // Clear previous result
 
-    pdfMake.createPdf(docDefinition).getDataUrl((dataUrl) => {
-        if (dataUrl) {
-            console.log('PDF Data URL:', dataUrl); // Debugging log
+        pdfMake.createPdf(docDefinition).getDataUrl((dataUrl) => {
             const iframe = document.createElement('iframe');
             iframe.src = dataUrl;
             resultContainer.appendChild(iframe);
-            document.getElementById('result').classList.remove('hidden');
-        } else {
-            console.error('Error generating PDF data URL.');
-        }
-    }).catch(error => {
-        console.error('Error generating PDF:', error);
-    });
+            const resultElement = document.getElementById('result');
+            if (resultElement) {
+                resultElement.classList.remove('hidden');
+            }
+        });
 
-    pdfMake.createPdf(docDefinition).download('ixtiraçi_kodu.pdf'); // Enable download on mobile
+        pdfMake.createPdf(docDefinition).download('ixtiraçi_kodu.pdf'); // Enable download on mobile
+    } else {
+        console.error('Result container element not found');
+    }
 }
