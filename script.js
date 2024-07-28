@@ -43,32 +43,32 @@ function generatePDF(fullName, phoneNumber, code, isNew) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    // Set styles
-    const styles = {
-        header: { fontSize: 18, fontStyle: 'bold' },
-        subheader: { fontSize: 16, fontStyle: 'bold', margin: [0, 10, 0, 10] },
-        bold: { fontStyle: 'bold', margin: [0, 10, 0, 10] },
-        italic: { fontStyle: 'italic', margin: [0, 10, 0, 10] }
-    };
+    // Set up the ID card layout
+    doc.setFillColor(255, 255, 255);
+    doc.rect(10, 10, 190, 90, 'F'); // Draw the card background
 
-    // Add content with styles
-    doc.setFont('helvetica');
-    doc.setFontSize(styles.header.fontSize);
-    doc.setFont(undefined, 'bold');
-    doc.text('İxtiraçı Kodunu Öyrən', 10, 10);
+    // Add the logo
+    doc.addImage('https://i.ibb.co/7XNQPGC/logo.png', 'PNG', 15, 15, 30, 30);
 
+    // Add user information
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(16);
-    doc.setFont(undefined, 'normal');
-    doc.text(`Ad Soyad Ata adı: ${fullName}`, 10, 20);
-    doc.text(`Telefon nömrəsi: ${phoneNumber}`, 10, 30);
-    doc.text(`İxtiraçı kodu: ${code}`, 10, 40);
+    doc.text(fullName, 60, 25);
+    doc.setFontSize(12);
+    doc.text(`Telefon nömrəsi: ${phoneNumber}`, 60, 35);
+    doc.text(`İxtiraçı kodu: ${code}`, 60, 45);
 
+    // Add the welcome message
+    doc.setFontSize(10);
     const message = isNew
         ? 'İxtiraçılar klubuna xoş gəldin! Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.'
         : 'Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.';
-    doc.text(message, 10, 50);
+    doc.text(message, 60, 55, { maxWidth: 130 });
 
-    doc.addImage('https://i.ibb.co/7XNQPGC/logo.png', 'PNG', 10, 60, 50, 50);
+    // Add border and additional styling
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(1);
+    doc.rect(10, 10, 190, 90); // Draw the card border
 
     // Open PDF in new tab for mobile devices
     const pdfOutput = doc.output('blob');
