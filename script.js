@@ -5,128 +5,81 @@ document.getElementById('registrationForm').addEventListener('submit', function 
 
     checkPhoneNumber(phoneNumber).then(existingCode => {
         if (existingCode) {
-            generateAndDisplayPDF(fullName, phoneNumber, existingCode, false);
+            generatePDF(fullName, phoneNumber, existingCode, false);
         } else {
-            getLatestCode().then(latestCode => {
-                const newCode = latestCode + 1;
-                saveUserInfo(fullName, phoneNumber, newCode).then(() => {
-                    generateAndDisplayPDF(fullName, phoneNumber, newCode, true);
-                });
+            const newCode = generateNewCode();
+            saveUserInfo(fullName, phoneNumber, newCode).then(() => {
+                generatePDF(fullName, phoneNumber, newCode, true);
             });
         }
-    }).catch(error => {
-        console.error('Error checking phone number:', error);
     });
 });
 
 function checkPhoneNumber(phoneNumber) {
-    return fetch(`hhttps://script.google.com/macros/s/AKfycbzPC57CyDQDdzYHgLghK6OQM7DH3i0PDArPpwOJvcr51Vdx1OP_gsfEr96YW36qnXA82A/exec?phone=${phoneNumber}`)
+    return fetch(`https://script.google.com/macros/s/AKfycbzVK55eIuHdTUxPm2RzZ83H3zlRmDHW7Z-R_J4WtFNSYOEKqJJVSwOC4gFYDKugK1S2mA/exec?phone=${phoneNumber}`)
         .then(response => response.json())
         .then(data => data.code);
 }
 
-function getLatestCode() {
-    return fetch(`https://script.google.com/macros/s/AKfycbzPC57CyDQDdzYHgLghK6OQM7DH3i0PDArPpwOJvcr51Vdx1OP_gsfEr96YW36qnXA82A/exec?latest=true`)
-        .then(response => response.json())
-        .then(data => data.latestCode);
+function generateNewCode() {
+    const lastCode = localStorage.getItem('lastCode') || 1000;
+    const newCode = parseInt(lastCode) + 1;
+    localStorage.setItem('lastCode', newCode);
+    return newCode;
 }
 
 function saveUserInfo(fullName, phoneNumber, code) {
-    const currentDate = new Date().toLocaleDateString();
-    return fetch('https://script.google.com/macros/s/AKfycbzPC57CyDQDdzYHgLghK6OQM7DH3i0PDArPpwOJvcr51Vdx1OP_gsfEr96YW36qnXA82A/exec', {
+    const date = new Date().toLocaleDateString('az-AZ');
+    return fetch('https://script.google.com/macros/s/AKfycbzVK55eIuHdTUxPm2RzZ83H3zlRmDHW7Z-R_J4WtFNSYOEKqJJVSwOC4gFYDKugK1S2mA/exec', {
         method: 'POST',
         body: new URLSearchParams({
             'full-name': fullName,
             'phone-number': phoneNumber,
             'code': code,
-            'date': currentDate
+            'date': date
         })
-    }).then(response => response.json()).catch(error => {
-        console.error('Error saving user info:', error);
-    });
+    }).then(response => response.json());
 }
 
-function generateAndDisplayPDF(fullName, phoneNumber, code, isNew) {
-    const docDefinition = {
-        content: [
-            {
-                image: 'https://i.ibb.co/7XNQPGC/logo.png',
-                width: 50,
-                alignment: 'right'
-            },
-            {
-                text: 'UAV OPERATORS CERTIFICATE',
-                style: 'header'
-            },
-            {
-                text: 'UNITED STATES OF AMERICA',
-                style: 'subheader'
-            },
-            {
-                text: `UAVID-${code}`,
-                style: 'code'
-            },
-            {
-                columns: [
-                    {
-                        width: '*',
-                        text: [
-                            { text: 'First: ', bold: true },
-                            fullName.split(' ')[0] || '',
-                            '\n',
-                            { text: 'Last: ', bold: true },
-                            fullName.split(' ')[1] || '',
-                            '\n',
-                            { text: 'Phone: ', bold: true },
-                            phoneNumber,
-                            '\n',
-                            { text: 'İxtiraçı kodu: ', bold: true },
-                            code
-                        ]
-                    },
-                    {
-                        width: 50,
-                        image: 'https://via.placeholder.com/50',
-                        alignment: 'right'
-                    }
-                ]
-            },
-            {
-                text: isNew
-                    ? 'İxtiraçılar klubuna xoş gəldin! Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.'
-                    : 'Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.',
-                style: 'message'
-            }
-        ],
-        styles: {
-            header: { fontSize: 18, bold: true },
-            subheader: { fontSize: 14, margin: [0, 0, 0, 10] },
-            code: { fontSize: 12, color: 'red', margin: [0, 0, 0, 20] },
-            message: { fontSize: 10, margin: [0, 20, 0, 0] }
-        }
+function generatePDF(fullName, phoneNumber, code, isNew) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Set styles
+    const styles = {
+        header: { fontSize: 18, fontStyle: 'bold' },
+        subheader: { fontSize: 16, fontStyle: 'bold', margin: [0, 10, 0, 10] },
+        bold: { fontStyle: 'bold', margin: [0, 10, 0, 10] },
+        italic: { fontStyle: 'italic', margin: [0, 10, 0, 10] }
     };
 
-    const resultContainer = document.getElementById('pdf-viewer');
-    resultContainer.innerHTML = ''; // Clear previous result
+    // Add content with styles
+    doc.setFont('helvetica');
+    doc.setFontSize(styles.header.fontSize);
+    doc.setFont(undefined, 'bold');
+    doc.text('İxtiraçı Kodunu Öyrən', 10, 20);
 
-    pdfMake.createPdf(docDefinition).getDataUrl((dataUrl) => {
-        if (dataUrl) {
-            console.log('PDF Data URL:', dataUrl); // Debugging log
-            const iframe = document.createElement('iframe');
-            iframe.src = dataUrl;
-            resultContainer.appendChild(iframe);
-            document.getElementById('result').classList.remove('hidden');
+    doc.setFontSize(16);
+    doc.setFont(undefined, 'normal');
+    doc.text(`Ad Soyad Ata adı: ${fullName}`, 10, 40);
+    doc.text(`Telefon nömrəsi: ${phoneNumber}`, 10, 50);
+    doc.text(`İxtiraçı kodu: ${code}`, 10, 60);
 
-            // Show download button and set up download action
-            const downloadBtn = document.getElementById('downloadBtn');
-            downloadBtn.classList.remove('hidden');
-            downloadBtn.onclick = function() {
-                pdfMake.createPdf(docDefinition).download('ixtiraçi_kodu.pdf');
-            };
-        } else {
-            console.error('Error generating PDF data URL.');
-        }
-    }).catch(error => {
-        console.error('Error generating PDF:', error);
-    });
+    const message = isNew
+        ? 'İxtiraçılar klubuna xoş gəldin! Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.'
+        : 'Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.';
+    doc.text(message, 10, 80);
+
+    doc.addImage('https://i.ibb.co/7XNQPGC/logo.png', 'PNG', 10, 100, 50, 50);
+
+    // Open PDF in new tab for mobile devices
+    const pdfOutput = doc.output('blob');
+    const pdfURL = URL.createObjectURL(pdfOutput);
+    const link = document.createElement('a');
+    link.href = pdfURL;
+    link.target = '_blank';
+    link.download = 'ixtiraçi_kodu.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
