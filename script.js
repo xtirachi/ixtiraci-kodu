@@ -41,34 +41,52 @@ function saveUserInfo(fullName, phoneNumber, code) {
 
 function generatePDF(fullName, phoneNumber, code, isNew) {
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+    const doc = new jsPDF('landscape');
 
-    // Set up the ID card layout
+    // Background and border
     doc.setFillColor(255, 255, 255);
-    doc.rect(10, 10, 190, 90, 'F'); // Draw the card background
+    doc.rect(0, 0, 297, 210, 'F'); // A4 landscape size
 
     // Add the logo
-    doc.addImage('https://i.ibb.co/7XNQPGC/logo.png', 'PNG', 15, 15, 30, 30);
+    doc.addImage('https://i.ibb.co/7XNQPGC/logo.png', 'PNG', 250, 10, 35, 35);
 
     // Add user information
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(16);
-    doc.text(fullName, 60, 25);
+    doc.text('UAV OPERATORS CERTIFICATE', 15, 20);
     doc.setFontSize(12);
-    doc.text(`Telefon nömrəsi: ${phoneNumber}`, 60, 35);
-    doc.text(`İxtiraçı kodu: ${code}`, 60, 45);
+    doc.setFont(undefined, 'normal');
+    doc.text('UNITED STATES OF AMERICA', 15, 28);
+
+    // Add red text
+    doc.setTextColor(255, 0, 0);
+    doc.setFontSize(14);
+    doc.text(`UAVID-${code}`, 15, 38);
+
+    // Add blue text
+    doc.setTextColor(0, 0, 255);
+    doc.setFontSize(10);
+    doc.text('First', 15, 50);
+    doc.text('Last', 55, 50);
+
+    // Reset text color to black
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+    doc.text(fullName, 15, 60); // Assuming fullName contains both first and last name
+
+    doc.text(`Telefon nömrəsi: ${phoneNumber}`, 15, 70);
+    doc.text(`İxtiraçı kodu: ${code}`, 15, 80);
 
     // Add the welcome message
     doc.setFontSize(10);
     const message = isNew
         ? 'İxtiraçılar klubuna xoş gəldin! Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.'
         : 'Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.';
-    doc.text(message, 60, 55, { maxWidth: 130 });
+    doc.text(message, 15, 90, { maxWidth: 260 });
 
-    // Add border and additional styling
-    doc.setDrawColor(0, 0, 0);
-    doc.setLineWidth(1);
-    doc.rect(10, 10, 190, 90); // Draw the card border
+    // Add photo placeholder or user's photo if available
+    // For this example, we'll use a placeholder image
+    doc.addImage('https://via.placeholder.com/50', 'PNG', 250, 50, 35, 45);
 
     // Open PDF in new tab for mobile devices
     const pdfOutput = doc.output('blob');
