@@ -63,7 +63,7 @@ function generatePDF(fullName, phoneNumber, code, isNew) {
         : 'Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.';
     doc.text(message, 10, 60);
 
-    // Compress the image before adding
+    // Add compressed logo
     const logo = new Image();
     logo.src = 'https://i.ibb.co/7XNQPGC/logo.png';
     logo.onload = function () {
@@ -76,8 +76,6 @@ function generatePDF(fullName, phoneNumber, code, isNew) {
         link.href = pdfURL;
         link.target = '_blank';
         link.download = 'ixtiraçi_kodu.pdf';
-        document.body.appendChild(link);
         link.click();
-        document.body.removeChild(link);
     };
 }
