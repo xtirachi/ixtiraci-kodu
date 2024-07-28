@@ -16,14 +16,12 @@ document.getElementById('registrationForm').addEventListener('submit', function 
 });
 
 function checkPhoneNumber(phoneNumber) {
-    return fetch(`https://script.google.com/macros/s/AKfycbzw1oetgdWIgVPcqdntsqMyWisnUXL2wQG7HoT4NbICP8nXEda7GM10llcqXf6qX2HT7w/exec?phone=${phoneNumber}`)
+    return fetch(`https://script.google.com/macros/s/AKfycbwXZ7b7v2rsGIytMHQMFqHIxu5sP60VFbyfC8bd3ycqi9SDN8j2SIkYw3z79Wn0gKmTwQ/exec?phone=${phoneNumber}`)
         .then(response => response.json())
         .then(data => data.code);
 }
 
 function generateNewCode() {
-    // This function should generate a unique 4-digit code.
-    // For simplicity, this example increments from 1001 stored in the browser.
     const lastCode = localStorage.getItem('lastCode') || 1000;
     const newCode = parseInt(lastCode) + 1;
     localStorage.setItem('lastCode', newCode);
@@ -31,7 +29,7 @@ function generateNewCode() {
 }
 
 function saveUserInfo(fullName, phoneNumber, code) {
-    return fetch('https://script.google.com/macros/s/AKfycbzw1oetgdWIgVPcqdntsqMyWisnUXL2wQG7HoT4NbICP8nXEda7GM10llcqXf6qX2HT7w/exec/exec', {
+    return fetch('https://script.google.com/macros/s/AKfycbwXZ7b7v2rsGIytMHQMFqHIxu5sP60VFbyfC8bd3ycqi9SDN8j2SIkYw3z79Wn0gKmTwQ/exec', {
         method: 'POST',
         body: new URLSearchParams({
             'full-name': fullName,
@@ -45,20 +43,41 @@ function generatePDF(fullName, phoneNumber, code, isNew) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
+    // Set styles
+    const styles = {
+        header: { fontSize: 18, fontStyle: 'bold' },
+        subheader: { fontSize: 16, fontStyle: 'bold', margin: [0, 10, 0, 10] },
+        bold: { fontStyle: 'bold', margin: [0, 10, 0, 10] },
+        italic: { fontStyle: 'italic', margin: [0, 10, 0, 10] }
+    };
+
+    // Add content with styles
+    doc.setFont('helvetica');
+    doc.setFontSize(styles.header.fontSize);
+    doc.setFont(undefined, 'bold');
+    doc.text('İxtiraçı Kodunu Öyrən', 10, 10);
+
     doc.setFontSize(16);
+    doc.setFont(undefined, 'normal');
     doc.text(`Ad Soyad Ata adı: ${fullName}`, 10, 20);
     doc.text(`Telefon nömrəsi: ${phoneNumber}`, 10, 30);
     doc.text(`İxtiraçı kodu: ${code}`, 10, 40);
 
-    if (isNew) {
-        doc.text('İxtiraçılar klubuna xoş gəldin! Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.', 10, 50);
-    } else {
-        doc.text('Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.', 10, 50);
-    }
+    const message = isNew
+        ? 'İxtiraçılar klubuna xoş gəldin! Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.'
+        : 'Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.';
+    doc.text(message, 10, 50);
 
     doc.addImage('https://i.ibb.co/7XNQPGC/logo.png', 'PNG', 10, 60, 50, 50);
 
+    // Open PDF in new tab for mobile devices
     const pdfOutput = doc.output('blob');
     const pdfURL = URL.createObjectURL(pdfOutput);
-    window.open(pdfURL, '_blank');
+    const link = document.createElement('a');
+    link.href = pdfURL;
+    link.target = '_blank';
+    link.download = 'ixtiraçi_kodu.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
