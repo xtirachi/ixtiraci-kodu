@@ -114,4 +114,4 @@ function saveUserInfo(fullName, phoneNumber, code) {
     });
 
     pdfMake.createPdf(docDefinition).download('ixtiraçi_kodu.pdf'); // Enable download on mobile
-}
+});
