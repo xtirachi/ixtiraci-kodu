@@ -49,25 +49,28 @@ function generatePDF(fullName, phoneNumber, code, isNew) {
     doc.setFont('helvetica');
     doc.setFontSize(14);
 
-    // Add content
+    // Add header
     doc.setFont(undefined, 'bold');
-    doc.text('İxtiraçı Kodunu Öyrən', 10, 20);
+    doc.text('İxtiraçı Kodunu Öyrən', 105, 20, null, null, 'center');
 
+    // Add user details
+    doc.setFontSize(12);
     doc.setFont(undefined, 'normal');
-    doc.text(`Ad Soyad Ata adı: ${fullName}`, 10, 30);
-    doc.text(`Telefon nömrəsi: ${phoneNumber}`, 10, 40);
-    doc.text(`İxtiraçı kodu: ${code}`, 10, 50);
+    doc.text(`Ad Soyad Ata adı: ${fullName}`, 10, 40);
+    doc.text(`Telefon nömrəsi: ${phoneNumber}`, 10, 50);
+    doc.text(`İxtiraçı kodu: ${code}`, 10, 60);
 
+    // Add message
     const message = isNew
         ? 'İxtiraçılar klubuna xoş gəldin! Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.'
         : 'Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.';
-    doc.text(message, 10, 60);
+    doc.text(message, 10, 80, { maxWidth: 190 });
 
     // Add compressed logo
     const logo = new Image();
     logo.src = 'https://i.ibb.co/7XNQPGC/logo.png';
     logo.onload = function () {
-        doc.addImage(logo, 'PNG', 10, 70, 40, 40);
+        doc.addImage(logo, 'PNG', 10, 100, 40, 40);
 
         // Open PDF in new tab for mobile devices
         const pdfOutput = doc.output('blob');
@@ -76,6 +79,8 @@ function generatePDF(fullName, phoneNumber, code, isNew) {
         link.href = pdfURL;
         link.target = '_blank';
         link.download = 'ixtiraçi_kodu.pdf';
+        document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
     };
 }
