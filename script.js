@@ -41,7 +41,8 @@ function saveUserInfo(fullName, phoneNumber, code) {
     }).then(response => response.json());
 }
 
-function generatePDF(fullName, phoneNumber, code, isNew) {
+};
+
     const docDefinition = {
         content: [
             {
@@ -50,15 +51,15 @@ function generatePDF(fullName, phoneNumber, code, isNew) {
                 alignment: 'right'
             },
             {
-                text: 'UAV OPERATORS CERTIFICATE',
+                text: 'Ixtiraçı Sertifikatı',
                 style: 'header'
             },
             {
-                text: 'UNITED STATES OF AMERICA',
+                text: 'XTirachi',
                 style: 'subheader'
             },
             {
-                text: `UAVID-${code}`,
+                text: `İxtiraçı kodu-${code}`,
                 style: 'code'
             },
             {
@@ -81,7 +82,7 @@ function generatePDF(fullName, phoneNumber, code, isNew) {
                     },
                     {
                         width: 50,
-                        image: 'https://via.placeholder.com/50',
+                        image: 'https://i.ibb.co/7XNQPGC/logo.png',
                         alignment: 'right'
                     }
                 ]
