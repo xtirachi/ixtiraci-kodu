@@ -72,15 +72,23 @@ function generatePDF(fullName, phoneNumber, code, isNew) {
     logo.onload = function () {
         doc.addImage(logo, 'PNG', 10, 100, 40, 40);
 
-        // Open PDF in new tab for mobile devices
-        const pdfOutput = doc.output('blob');
-        const pdfURL = URL.createObjectURL(pdfOutput);
+        // Generate the PDF
+        const pdfOutput = doc.output('datauristring');
+        const iframe = document.createElement('iframe');
+        iframe.src = pdfOutput;
+        iframe.width = '100%';
+        iframe.height = '500px';
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = '';  // Clear previous result
+        resultDiv.appendChild(iframe);
+
+        // Create a download link
         const link = document.createElement('a');
-        link.href = pdfURL;
-        link.target = '_blank';
+        link.href = pdfOutput;
         link.download = 'ixtiraçi_kodu.pdf';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        link.textContent = 'PDF-i Yüklə';
+        link.style.display = 'block';
+        link.style.marginTop = '10px';
+        resultDiv.appendChild(link);
     };
 }
