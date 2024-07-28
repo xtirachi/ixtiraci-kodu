@@ -1,7 +1,5 @@
-/* styles.css */
-iframe {
+#pdf-viewer iframe {
     width: 100%;
-    height: 500px;
+    height: 100%;
     border: none;
 }
-
