@@ -86,7 +86,7 @@ function generateAndDisplayPDF(fullName, phoneNumber, code, isNew) {
                     },
                     {
                         width: 50,
-                        image: 'https://via.placeholder.com/50',
+                        image: 'https://i.ibb.co/7XNQPGC/logo.png',
                         alignment: 'right'
                     }
                 ]
