@@ -21,9 +21,12 @@
             </div>
             <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-md shadow-sm hover:bg-blue-600">Göndər</button>
         </form>
-        <div id="result" class="mt-4"></div>
+        <div id="result" class="mt-4 hidden">
+            <div id="pdf-viewer" class="w-full h-96"></div>
+        </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.71/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.71/vfs_fonts.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
