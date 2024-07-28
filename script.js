@@ -5,11 +5,11 @@ document.getElementById('registrationForm').addEventListener('submit', function 
 
     checkPhoneNumber(phoneNumber).then(existingCode => {
         if (existingCode) {
-            generatePDF(fullName, phoneNumber, existingCode, false);
+            generateAndDisplayPDF(fullName, phoneNumber, existingCode, false);
         } else {
             const newCode = generateNewCode();
             saveUserInfo(fullName, phoneNumber, newCode).then(() => {
-                generatePDF(fullName, phoneNumber, newCode, true);
+                generateAndDisplayPDF(fullName, phoneNumber, newCode, true);
             });
         }
     });
@@ -41,8 +41,7 @@ function saveUserInfo(fullName, phoneNumber, code) {
     }).then(response => response.json());
 }
 
-};
-
+function generateAndDisplayPDF(fullName, phoneNumber, code, isNew) {
     const docDefinition = {
         content: [
             {
@@ -51,15 +50,15 @@ function saveUserInfo(fullName, phoneNumber, code) {
                 alignment: 'right'
             },
             {
-                text: 'Ixtiraçı Sertifikatı',
+                text: 'UAV OPERATORS CERTIFICATE',
                 style: 'header'
             },
             {
-                text: 'XTirachi',
+                text: 'UNITED STATES OF AMERICA',
                 style: 'subheader'
             },
             {
-                text: `İxtiraçı kodu-${code}`,
+                text: `UAVID-${code}`,
                 style: 'code'
             },
             {
@@ -82,7 +81,7 @@ function saveUserInfo(fullName, phoneNumber, code) {
                     },
                     {
                         width: 50,
-                        image: 'https://i.ibb.co/7XNQPGC/logo.png',
+                        image: 'https://via.placeholder.com/50',
                         alignment: 'right'
                     }
                 ]
@@ -108,10 +107,9 @@ function saveUserInfo(fullName, phoneNumber, code) {
     pdfMake.createPdf(docDefinition).getDataUrl((dataUrl) => {
         const iframe = document.createElement('iframe');
         iframe.src = dataUrl;
-        iframe.className = 'w-full h-96';
         resultContainer.appendChild(iframe);
         document.getElementById('result').classList.remove('hidden');
     });
 
     pdfMake.createPdf(docDefinition).download('ixtiraçi_kodu.pdf'); // Enable download on mobile
-});
+}
