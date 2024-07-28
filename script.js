@@ -12,6 +12,8 @@ document.getElementById('registrationForm').addEventListener('submit', function 
                 saveUserInfo(fullName, phoneNumber, newCode).then(() => {
                     generateAndDisplayPDF(fullName, phoneNumber, newCode, true);
                 });
+            }).catch(error => {
+                console.error('Error getting latest code:', error);
             });
         }
     }).catch(error => {
@@ -20,20 +22,20 @@ document.getElementById('registrationForm').addEventListener('submit', function 
 });
 
 function checkPhoneNumber(phoneNumber) {
-    return fetch(`https://script.google.com/macros/s/AKfycbzDsM67CKYBZkNwf4cYMvUjtncb8OerLZvdzVpXCIEuKHP-5Q7Ir-SOVTbbROnDoKJnPw/exec?phone=${phoneNumber}`)
+    return fetch(`https://script.google.com/macros/s/AKfycbx00MY0z4asXcAgDZURZBCzqOBc8HFfj3NzWv_bwOIZwjUEGwFhz0jV0Sd6MsWIyazT4g/exec?phone=${phoneNumber}`)
         .then(response => response.json())
         .then(data => data.code);
 }
 
 function getLatestCode() {
-    return fetch(`https://script.google.com/macros/s/AKfycbzDsM67CKYBZkNwf4cYMvUjtncb8OerLZvdzVpXCIEuKHP-5Q7Ir-SOVTbbROnDoKJnPw/exec?latest=true`)
+    return fetch(`https://script.google.com/macros/s/AKfycbx00MY0z4asXcAgDZURZBCzqOBc8HFfj3NzWv_bwOIZwjUEGwFhz0jV0Sd6MsWIyazT4g/exec?latest=true`)
         .then(response => response.json())
         .then(data => data.latestCode);
 }
 
 function saveUserInfo(fullName, phoneNumber, code) {
     const currentDate = new Date().toLocaleDateString();
-    return fetch('https://script.google.com/macros/s/AKfycbzDsM67CKYBZkNwf4cYMvUjtncb8OerLZvdzVpXCIEuKHP-5Q7Ir-SOVTbbROnDoKJnPw/exec', {
+    return fetch('https://script.google.com/macros/s/AKfycbx00MY0z4asXcAgDZURZBCzqOBc8HFfj3NzWv_bwOIZwjUEGwFhz0jV0Sd6MsWIyazT4g/exec', {
         method: 'POST',
         body: new URLSearchParams({
             'full-name': fullName,
@@ -45,12 +47,13 @@ function saveUserInfo(fullName, phoneNumber, code) {
         console.error('Error saving user info:', error);
     });
 }
-
 function generateAndDisplayPDF(fullName, phoneNumber, code, isNew) {
+    const logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAA..'; // truncated base64 string for example
+
     const docDefinition = {
         content: [
             {
-                image: 'https://i.ibb.co/7XNQPGC/logo.png',
+                image: logoBase64,
                 width: 50,
                 alignment: 'right'
             },
@@ -86,7 +89,7 @@ function generateAndDisplayPDF(fullName, phoneNumber, code, isNew) {
                     },
                     {
                         width: 50,
-                        image: 'https://i.ibb.co/7XNQPGC/logo.png',
+                        image: logoBase64,
                         alignment: 'right'
                     }
                 ]
