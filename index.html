@@ -1,23 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="az">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generate PDF</title>
+    <title>İxtiraçı Kodunu Öyrən</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <form id="registrationForm">
-        <label for="fullName">Ad Soyad Ata adı:</label>
-        <input type="text" id="fullName" name="fullName" required><br><br>
-        <label for="phoneNumber">Telefon nömrəsi:</label>
-        <input type="text" id="phoneNumber" name="phoneNumber" required>
-        <small>0702342342</small><br><br>
-        <button type="submit">Göndər</button>
-    </form>
-    <iframe id="pdfFrame" style="display:none;"></iframe>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/vfs_fonts.js"></script>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded shadow-md w-full max-w-lg">
+        <img src="https://i.ibb.co/7XNQPGC/logo.png" alt="Logo" class="mx-auto mb-4" style="width: 100px;">
+        <h1 class="text-2xl font-bold mb-6 text-center">İxtiraçı Kodunu Öyrən</h1>
+        <form id="registrationForm" class="space-y-4">
+            <div>
+                <label for="fullName" class="block text-sm font-medium text-gray-700">Ad Soyad Ata adı</label>
+                <input type="text" id="fullName" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" required>
+            </div>
+            <div>
+                <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Telefon nömrəsi</label>
+                <input type="text" id="phoneNumber" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" placeholder="0702342342" style="font-size: 0.9em;" required>
+            </div>
+            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-md shadow-sm hover:bg-blue-600">Göndər</button>
+        </form>
+        <div id="result" class="mt-4 hidden">
+            <div id="pdf-viewer" class="w-full h-96"></div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.71/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.71/vfs_fonts.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
