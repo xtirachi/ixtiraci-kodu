@@ -1,20 +1,31 @@
 document.getElementById('registrationForm').addEventListener('submit', function (e) {
     e.preventDefault();
     const fullName = document.getElementById('fullName').value;
-    const phoneNumber = document.getElementById('phoneNumber').value + " (Aktiv Votsap)";
-    document.getElementById('popup').style.display = 'block';
+    const phoneNumber = document.getElementById('phoneNumber').value;
+
+    showPopup();
 
     checkPhoneNumber(phoneNumber).then(existingCode => {
         if (existingCode) {
-            generateImage(fullName, phoneNumber, existingCode, false);
+            generateCertificate(fullName, phoneNumber, existingCode, false);
         } else {
             const newCode = generateNewCode();
             saveUserInfo(fullName, phoneNumber, newCode).then(() => {
-                generateImage(fullName, phoneNumber, newCode, true);
+                generateCertificate(fullName, phoneNumber, newCode, true);
             });
         }
     });
 });
+
+function showPopup() {
+    const popup = document.getElementById('popup');
+    popup.style.display = 'block';
+}
+
+function hidePopup() {
+    const popup = document.getElementById('popup');
+    popup.style.display = 'none';
+}
 
 function checkPhoneNumber(phoneNumber) {
     return fetch(`https://script.google.com/macros/s/AKfycbzVK55eIuHdTUxPm2RzZ83H3zlRmDHW7Z-R_J4WtFNSYOEKqJJVSwOC4gFYDKugK1S2mA/exec?phone=${phoneNumber}`)
@@ -42,65 +53,30 @@ function saveUserInfo(fullName, phoneNumber, code) {
     }).then(response => response.json());
 }
 
-function generateImage(fullName, phoneNumber, code, isNew) {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const idWidth = 500;
-    const idHeight = 300;
+function generateCertificate(fullName, phoneNumber, code, isNew) {
+    const certificateContent = `
+        <div style="width: 400px; padding: 20px; background-color: #f5f5dc; border: 1px solid #000; border-radius: 10px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img src="https://i.ibb.co/7XNQPGC/logo.png" alt="Logo" style="width: 60px;">
+            </div>
+            <h2 style="text-align: center; font-size: 18px; font-weight: bold;">İxtiraçı Kodunu Öyrən</h2>
+            <p><strong>Ad Soyad Ata adı:</strong> ${fullName}</p>
+            <p><strong>Telefon nömrəsi:</strong> ${phoneNumber}</p>
+            <p><strong>İxtiraçı kodu:</strong> ${code}</p>
+            <p>${isNew ? 'İxtiraçılar klubuna xoş gəldin! Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.' : 'Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.'}</p>
+        </div>
+    `;
 
-    // Set canvas dimensions
-    canvas.width = idWidth;
-    canvas.height = idHeight;
+    const certificateDiv = document.createElement('div');
+    certificateDiv.innerHTML = certificateContent;
+    document.body.appendChild(certificateDiv);
 
-    // Load background image
-    const background = new Image();
-    background.src = 'https://i.ibb.co/G96Nn1Q/id-background.png'; // Use an appropriate ID background image URL
-    background.onload = function () {
-        ctx.drawImage(background, 0, 0, idWidth, idHeight);
-
-        // Draw logo
-        const logo = new Image();
-        logo.src = 'https://i.ibb.co/7XNQPGC/logo.png';
-        logo.onload = function () {
-            ctx.drawImage(logo, 20, 20, 100, 50);
-
-            // Draw text
-            ctx.font = '20px Arial';
-            ctx.fillStyle = '#000';
-            ctx.fillText('İxtiraçı Kodunu Öyrən', 150, 40);
-            ctx.font = '16px Arial';
-            ctx.fillText(`Ad Soyad Ata adı: ${fullName}`, 20, 100);
-            ctx.fillText(`Telefon nömrəsi: ${phoneNumber}`, 20, 130);
-            ctx.fillText(`İxtiraçı kodu: ${code}`, 20, 160);
-
-            const message = isNew
-                ? 'İxtiraçılar klubuna xoş gəldin! Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.'
-                : 'Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.';
-            ctx.fillText(message, 20, 190, idWidth - 40);
-
-            // Convert canvas to image and display it
-            const dataURL = canvas.toDataURL('image/png');
-            const img = new Image();
-            img.src = dataURL;
-            img.alt = 'İxtiraçı Sertifikatı';
-            img.style.width = '100%';
-            img.style.height = 'auto';
-
-            const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = '';
-            resultDiv.appendChild(img);
-
-            // Create download link
-            const link = document.createElement('a');
-            link.href = dataURL;
-            link.download = 'ixtiraci_sertifikati.png';
-            link.textContent = 'İxtiraçı sertifikatını yüklə';
-            link.style.display = 'block';
-            link.style.marginTop = '10px';
-            resultDiv.appendChild(link);
-
-            // Hide popup
-            document.getElementById('popup').style.display = 'none';
-        };
-    };
+    html2canvas(certificateDiv).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        document.getElementById('certificateImage').src = imgData;
+        document.getElementById('downloadLink').href = imgData;
+        document.getElementById('certificate').style.display = 'block';
+        hidePopup();
+        document.body.removeChild(certificateDiv);
+    });
 }
