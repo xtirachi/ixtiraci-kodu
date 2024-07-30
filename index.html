@@ -19,13 +19,13 @@
             color: #fff;
             padding: 20px;
             border-radius: 10px;
-            text-align: match-parent;
+            text-align: center;
             z-index: 1000;
         }
         #certificate {
             display: none;
             margin-top: 20px;
-            text-align: match-parent;
+            text-align: center;
         }
         #certificate img {
             border: 1px solid #ddd;
@@ -41,15 +41,21 @@
             border: 2px solid #eee;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            text-align: left;
             font-family: 'Arial', sans-serif;
             position: relative;
             margin: auto;
             height: 450px; /* Make it square */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         .certificate-header {
             margin-bottom: 10px;
             position: relative;
+            text-align: center;
+            width: 100%;
         }
         .certificate-header img {
             width: 60px;
@@ -63,12 +69,15 @@
             font-weight: bold;
             color: #333;
             margin-top: 80px; /* Adjust for logo */
+            text-align: center;
+            width: 100%;
         }
         .certificate-content {
             font-size: 16px;
             line-height: 1.5;
             color: #333;
-            text-align: match-parent;
+            text-align: left;
+            width: 100%;
         }
         .certificate-content p {
             margin: 10px 0;
