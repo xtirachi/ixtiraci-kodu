@@ -67,17 +67,18 @@ function saveUserInfo(fullName, phoneNumber, code) {
 
 function generateCertificate(fullName, phoneNumber, code, isNew) {
     const certificateDiv = document.createElement('div');
-    certificateDiv.className = 'certificate-container';
     certificateDiv.innerHTML = `
-        <div class="certificate-header">
-            <img src="https://i.ibb.co/7XNQPGC/logo.png" alt="Logo">
-        </div>
-        <h2 class="certificate-title">İxtiraçı Sertifikatı</h2>
-        <div class="certificate-content">
-            <p><strong>Ad Soyad Ata adı:</strong> ${fullName}</p>
-            <p><strong>Telefon nömrəsi:</strong> ${phoneNumber}</p>
-            <p><strong>İxtiraçı kodu:</strong> ${code}</p>
-            <p>${isNew ? 'İxtiraçılar klubuna xoş gəldin! Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.' : 'Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.'}</p>
+        <div class="certificate-container">
+            <div class="certificate-header">
+                <img src="https://i.ibb.co/7XNQPGC/logo.png" alt="Logo">
+            </div>
+            <h2 class="certificate-title">İxtiraçı Sertifikatı</h2>
+            <div class="certificate-content">
+                <p><strong>Ad Soyad Ata adı:</strong> ${fullName}</p>
+                <p><strong>Telefon nömrəsi:</strong> ${phoneNumber}</p>
+                <p><strong>İxtiraçı kodu:</strong> ${code}</p>
+                <p>${isNew ? 'İxtiraçılar klubuna xoş gəldin! Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.' : 'Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.'}</p>
+            </div>
         </div>
     `;
     document.body.appendChild(certificateDiv);
