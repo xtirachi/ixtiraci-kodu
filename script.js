@@ -1,111 +1,101 @@
-<!DOCTYPE html>
-<html lang="az">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İxtiraçı Sertifikatı</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f5f5f5;
+document.getElementById('registrationForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const fullName = document.getElementById('fullName').value;
+    const phoneNumber = document.getElementById('phoneNumber').value;
+
+    showPopup();
+
+    checkPhoneNumber(phoneNumber).then(existingCode => {
+        if (existingCode) {
+            generateCertificate(fullName, phoneNumber, existingCode, false);
+        } else {
+            const newCode = generateNewCode();
+            saveUserInfo(fullName, phoneNumber, newCode).then(() => {
+                generateCertificate(fullName, phoneNumber, newCode, true);
+            });
         }
-        #popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.7);
-            color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            z-index: 1000;
-        }
-        #certificate {
-            display: none;
-            margin-top: 20px;
-            text-align: center;
-        }
-        #certificate img {
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            background-color: #f9f9f9;
-            max-width: 100%;
-        }
-        .certificate-container {
-            width: 100%;
-            max-width: 450px;
-            padding: 20px;
-            background-color: #ffffff;
-            border: 2px solid #eee;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: left;
-            font-family: 'Arial', sans-serif;
-            position: relative;
-            margin: auto;
-        }
-        .certificate-header {
-            text-align: center;
-            margin-bottom: 20px;
-            position: relative;
-        }
-        .certificate-header img {
-            width: 60px;
-            position: absolute;
-            top: 10px;
-            left: 10px;
-        }
-        .certificate-title {
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        .certificate-content p {
-            margin: 10px 0;
-        }
-        .certificate-content p strong {
-            font-weight: bold;
-        }
-        .download-button {
-            margin-top: 20px;
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #28a745;
-            color: #fff;
-            border-radius: 5px;
-            text-decoration: none;
-        }
-        .download-button:hover {
-            background-color: #218838;
-        }
-    </style>
-</head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="bg-white p-8 rounded shadow-md w-full max-w-lg">
-        <img src="https://i.ibb.co/7XNQPGC/logo.png" alt="Logo" class="mx-auto mb-4" style="width: 100px;">
-        <h1 class="text-2xl font-bold mb-6 text-center">İxtiraçı Sertifikatı</h1>
-        <form id="registrationForm" class="space-y-4">
-            <div>
-                <label for="fullName" class="block text-sm font-medium text-gray-700">Ad Soyad Ata adı</label>
-                <input type="text" id="fullName" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" required>
+    });
+});
+
+function showPopup() {
+    const popup = document.getElementById('popup');
+    popup.style.display = 'block';
+}
+
+function hidePopup() {
+    const popup = document.getElementById('popup');
+    popup.style.display = 'none';
+}
+
+function checkPhoneNumber(phoneNumber) {
+    console.log(`Checking phone number: ${phoneNumber}`);
+    return fetch(`https://script.google.com/macros/s/AKfycbz6BmpKtm7KkYxFg08bhDNaL6CL6JbVcTkgS0KN9RXB6CnA1bW77HxcaqbfG4tYAWBAIw/exec?phone=${encodeURIComponent(phoneNumber)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Fetch response data:', data);
+            return data.code;
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+        });
+}
+
+function generateNewCode() {
+    const lastCode = localStorage.getItem('lastCode') || 1000;
+    const newCode = parseInt(lastCode) + 1;
+    localStorage.setItem('lastCode', newCode);
+    return newCode;
+}
+
+function saveUserInfo(fullName, phoneNumber, code) {
+    const date = new Date().toLocaleDateString('az-AZ');
+    return fetch('https://script.google.com/macros/s/AKfycbz6BmpKtm7KkYxFg08bhDNaL6CL6JbVcTkgS0KN9RXB6CnA1bW77HxcaqbfG4tYAWBAIw/exec', {
+        method: 'POST',
+        body: new URLSearchParams({
+            'full-name': fullName,
+            'phone-number': phoneNumber,
+            'code': code,
+            'date': date
+        })
+    }).then(response => response.json());
+}
+
+function generateCertificate(fullName, phoneNumber, code, isNew) {
+    const certificateContent = `
+        <div class="certificate-container">
+            <div class="certificate-header">
+                <img src="https://i.ibb.co/7XNQPGC/logo.png" alt="Logo">
             </div>
-            <div>
-                <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Telefon nömrəsi</label>
-                <input type="text" id="phoneNumber" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" placeholder="0702342342" style="font-size: 0.9em;" required>
+            <h2 class="certificate-title">İxtiraçı Sertifikatı</h2>
+            <div class="certificate-content">
+                <p><strong>Ad Soyad Ata adı:</strong> ${fullName}</p>
+                <p><strong>Telefon nömrəsi:</strong> ${phoneNumber}</p>
+                <p><strong>İxtiraçı kodu:</strong> ${code}</p>
+                <p>${isNew ? 'İxtiraçılar klubuna xoş gəldin! Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.' : 'Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.'}</p>
             </div>
-            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-md shadow-sm hover:bg-blue-600">Göndər</button>
-        </form>
-        <div id="result" class="mt-4"></div>
-        <div id="certificate">
-            <img id="certificateImage" alt="Certificate Image">
-            <a id="downloadLink" class="mt-4 download-button" download="ixtiraçi_sertifikatı.png">İxtiraçı sertifikatını yüklə</a>
         </div>
-    </div>
-    <div id="popup">İxtiraçı sertifikatınız hazırlanır, zəhmət olmasa gözləyin!</div>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
-    <script src="script.js"></script>
-</body>
-</html>
+    `;
+
+    const certificateDiv = document.createElement('div');
+    certificateDiv.innerHTML = certificateContent;
+    document.body.appendChild(certificateDiv);
+
+    html2canvas(certificateDiv, { logging: true, useCORS: true }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        document.getElementById('certificateImage').src = imgData;
+        const downloadLink = document.getElementById('downloadLink');
+        downloadLink.href = imgData;
+        downloadLink.download = `ixtiraçi_sertifikatı_${phoneNumber}.png`;
+        document.getElementById('certificate').style.display = 'block';
+        hidePopup();
+        document.body.removeChild(certificateDiv);
+    }).catch(error => {
+        console.error('Error generating certificate:', error);
+        hidePopup();
+    });
+}
