@@ -6,6 +6,9 @@
     <title>İxtiraçı Kodunu Öyrən</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
+        body {
+            background-color: #fafafa;
+        }
         #popup {
             display: none;
             position: fixed;
@@ -25,15 +28,15 @@
             text-align: center;
         }
         #certificate img {
-            border: 1px solid #000;
+            border: 1px solid #ddd;
             border-radius: 10px;
-            background-color: #f5f5dc; /* Softer creamy background */
+            background-color: #f9f9f9;
         }
         .certificate-container {
-            width: 400px;
+            width: 450px;
             padding: 20px;
-            background-color: #f5f5dc;
-            border: 2px solid #ddd;
+            background-color: #fff;
+            border: 2px solid #eee;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: left;
@@ -44,22 +47,31 @@
             margin-bottom: 20px;
         }
         .certificate-header img {
-            width: 60px;
+            width: 80px;
         }
         .certificate-title {
             text-align: center;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             margin-bottom: 20px;
         }
         .certificate-content p {
-            margin: 5px 0;
+            margin: 10px 0;
         }
         .certificate-content p strong {
             font-weight: bold;
         }
         .download-button {
             margin-top: 20px;
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .download-button:hover {
+            background-color: #218838;
         }
     </style>
 </head>
@@ -81,7 +93,7 @@
         <div id="result" class="mt-4"></div>
         <div id="certificate">
             <img id="certificateImage" alt="Certificate Image">
-            <a id="downloadLink" class="mt-4 inline-block bg-green-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-600 download-button" download="ixtiraçi_sertifikatı.png">İxtiraçı sertifikatını yüklə</a>
+            <a id="downloadLink" class="mt-4 download-button" download="ixtiraçi_sertifikatı.png">İxtiraçı sertifikatını yüklə</a>
         </div>
     </div>
     <div id="popup">İxtiraçı sertifikatınız hazırlanır, zəhmət olmasa gözləyin!</div>
