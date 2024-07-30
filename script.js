@@ -54,7 +54,7 @@ function generateImage(fullName, phoneNumber, code, isNew) {
 
     // Load background image
     const background = new Image();
-    background.src = 'https://i.ibb.co/jHG1Sh4/id-background.png'; // Use an appropriate ID background image URL
+    background.src = 'https://ibb.co/G96Nn1Q/id-background.png'; // Use an appropriate ID background image URL
     background.onload = function () {
         ctx.drawImage(background, 0, 0, idWidth, idHeight);
 
