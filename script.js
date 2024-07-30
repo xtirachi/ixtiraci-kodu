@@ -28,9 +28,21 @@ function hidePopup() {
 }
 
 function checkPhoneNumber(phoneNumber) {
-    return fetch(`https://script.google.com/macros/s/AKfycbz9oGfVZ6lpOM2GHwDhr9yYAik5oYajKq2FMKT1dfnZUJHLYV0Bvcn83CPqPzEm3Cc_Kw/exec?phone=${phoneNumber}`)
-        .then(response => response.json())
-        .then(data => data.code);
+    console.log(`Checking phone number: ${phoneNumber}`);
+    return fetch(`https://script.google.com/macros/s/AKfycbz6BmpKtm7KkYxFg08bhDNaL6CL6JbVcTkgS0KN9RXB6CnA1bW77HxcaqbfG4tYAWBAIw/exec?phone=${encodeURIComponent(phoneNumber)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Fetch response data:', data);
+            return data.code;
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+        });
 }
 
 function generateNewCode() {
@@ -42,7 +54,7 @@ function generateNewCode() {
 
 function saveUserInfo(fullName, phoneNumber, code) {
     const date = new Date().toLocaleDateString('az-AZ');
-    return fetch('https://script.google.com/macros/s/AKfycbz9oGfVZ6lpOM2GHwDhr9yYAik5oYajKq2FMKT1dfnZUJHLYV0Bvcn83CPqPzEm3Cc_Kw/exec', {
+    return fetch('https://script.google.com/macros/s/AKfycbz6BmpKtm7KkYxFg08bhDNaL6CL6JbVcTkgS0KN9RXB6CnA1bW77HxcaqbfG4tYAWBAIw/exec', {
         method: 'POST',
         body: new URLSearchParams({
             'full-name': fullName,
