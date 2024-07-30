@@ -34,18 +34,16 @@
             max-width: 100%;
         }
         .certificate-container {
-            width: 100%;
-            max-width: 450px;
+            width: 450px;
+            height: 450px;
             padding: 20px;
             background-color: #ffffff;
             border: 2px solid #eee;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: left;
+            text-align: center;
             font-family: 'Arial', sans-serif;
-            position: relative;
             margin: auto;
-            height: 450px; /* Make it square */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -54,7 +52,6 @@
         .certificate-header {
             margin-bottom: 10px;
             position: relative;
-            text-align: center;
             width: 100%;
         }
         .certificate-header img {
@@ -69,8 +66,6 @@
             font-weight: bold;
             color: #333;
             margin-top: 80px; /* Adjust for logo */
-            text-align: center;
-            width: 100%;
         }
         .certificate-content {
             font-size: 16px;
@@ -100,8 +95,8 @@
         @media (max-width: 640px) {
             .certificate-container {
                 padding: 10px;
-                height: 100vw; /* Ensure it's a square */
-                width: 100vw;
+                height: calc(100vw - 40px); /* Ensure it's a square */
+                width: calc(100vw - 40px);
             }
             .certificate-header img {
                 width: 50px;
