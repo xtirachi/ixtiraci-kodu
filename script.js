@@ -83,7 +83,14 @@ function generateCertificate(fullName, phoneNumber, code, isNew) {
     `;
     document.body.appendChild(certificateDiv);
 
-    html2canvas(certificateDiv, { logging: true, useCORS: true }).then(canvas => {
+    html2canvas(certificateDiv, {
+        logging: true,
+        useCORS: true,
+        width: certificateDiv.offsetWidth,
+        height: certificateDiv.offsetHeight,
+        windowWidth: certificateDiv.scrollWidth,
+        windowHeight: certificateDiv.scrollHeight
+    }).then(canvas => {
         const imgData = canvas.toDataURL('image/png');
 
         // Update the certificate image and download link
