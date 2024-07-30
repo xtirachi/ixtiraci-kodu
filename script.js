@@ -71,7 +71,7 @@ function generateCertificate(fullName, phoneNumber, code, isNew) {
             <div class="certificate-header">
                 <img src="https://i.ibb.co/7XNQPGC/logo.png" alt="Logo">
             </div>
-            <h2 class="certificate-title">İxtiraçı Kodunu Öyrən</h2>
+            <h2 class="certificate-title">İxtiraçı Sertifikatı</h2>
             <div class="certificate-content">
                 <p><strong>Ad Soyad Ata adı:</strong> ${fullName}</p>
                 <p><strong>Telefon nömrəsi:</strong> ${phoneNumber}</p>
