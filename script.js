@@ -69,7 +69,7 @@ function generateCertificate(fullName, phoneNumber, code, isNew) {
     const certificateContent = `
         <div class="certificate-container">
             <div class="certificate-header">
-                <img src="https://i.ibb.co/7XNQPGC/logo.png" alt="Logo" style="width: 60px; position: absolute; top: 20px; left: 20px;">
+                <img src="https://i.ibb.co/7XNQPGC/logo.png" alt="Logo">
             </div>
             <h2 class="certificate-title">İxtiraçı Sertifikatı</h2>
             <div class="certificate-content">
