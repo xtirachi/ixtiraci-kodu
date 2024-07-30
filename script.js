@@ -55,15 +55,17 @@ function saveUserInfo(fullName, phoneNumber, code) {
 
 function generateCertificate(fullName, phoneNumber, code, isNew) {
     const certificateContent = `
-        <div style="width: 400px; padding: 20px; background-color: #f5f5dc; border: 1px solid #000; border-radius: 10px;">
-            <div style="text-align: center; margin-bottom: 20px;">
-                <img src="https://i.ibb.co/7XNQPGC/logo.png" alt="Logo" style="width: 60px;">
+        <div class="certificate-container">
+            <div class="certificate-header">
+                <img src="https://i.ibb.co/7XNQPGC/logo.png" alt="Logo">
             </div>
-            <h2 style="text-align: center; font-size: 18px; font-weight: bold;">İxtiraçı Kodunu Öyrən</h2>
-            <p><strong>Ad Soyad Ata adı:</strong> ${fullName}</p>
-            <p><strong>Telefon nömrəsi:</strong> ${phoneNumber}</p>
-            <p><strong>İxtiraçı kodu:</strong> ${code}</p>
-            <p>${isNew ? 'İxtiraçılar klubuna xoş gəldin! Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.' : 'Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.'}</p>
+            <h2 class="certificate-title">İxtiraçı Kodunu Öyrən</h2>
+            <div class="certificate-content">
+                <p><strong>Ad Soyad Ata adı:</strong> ${fullName}</p>
+                <p><strong>Telefon nömrəsi:</strong> ${phoneNumber}</p>
+                <p><strong>İxtiraçı kodu:</strong> ${code}</p>
+                <p>${isNew ? 'İxtiraçılar klubuna xoş gəldin! Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.' : 'Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.'}</p>
+            </div>
         </div>
     `;
 
