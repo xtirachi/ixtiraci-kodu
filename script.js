@@ -66,7 +66,8 @@ function saveUserInfo(fullName, phoneNumber, code) {
 }
 
 function generateCertificate(fullName, phoneNumber, code, isNew) {
-    const certificateContent = `
+    const certificateDiv = document.createElement('div');
+    certificateDiv.innerHTML = `
         <div class="certificate-container">
             <div class="certificate-header">
                 <img src="https://i.ibb.co/7XNQPGC/logo.png" alt="Logo">
@@ -80,20 +81,23 @@ function generateCertificate(fullName, phoneNumber, code, isNew) {
             </div>
         </div>
     `;
-
-    const certificateDiv = document.createElement('div');
-    certificateDiv.innerHTML = certificateContent;
     document.body.appendChild(certificateDiv);
 
     html2canvas(certificateDiv, { logging: true, useCORS: true }).then(canvas => {
         const imgData = canvas.toDataURL('image/png');
-        document.getElementById('certificateImage').src = imgData;
+
+        // Update the certificate image and download link
+        const certificateImage = document.getElementById('certificateImage');
+        certificateImage.src = imgData;
+        certificateImage.onload = () => {
+            document.getElementById('certificate').style.display = 'block';
+            hidePopup();
+            document.body.removeChild(certificateDiv);
+        };
+
         const downloadLink = document.getElementById('downloadLink');
         downloadLink.href = imgData;
         downloadLink.download = `ixtiraçi_sertifikatı_${phoneNumber}.png`;
-        document.getElementById('certificate').style.display = 'block';
-        hidePopup();
-        document.body.removeChild(certificateDiv);
     }).catch(error => {
         console.error('Error generating certificate:', error);
         hidePopup();
