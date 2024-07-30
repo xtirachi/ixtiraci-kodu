@@ -28,7 +28,7 @@ function hidePopup() {
 }
 
 function checkPhoneNumber(phoneNumber) {
-    return fetch(`https://script.google.com/macros/s/AKfycbzVK55eIuHdTUxPm2RzZ83H3zlRmDHW7Z-R_J4WtFNSYOEKqJJVSwOC4gFYDKugK1S2mA/exec?phone=${phoneNumber}`)
+    return fetch(`https://script.google.com/macros/s/AKfycbzV-281Aw6Fm5XTZ2WL0OeSPXFJ8dOvuCZf0hzymY9nYMmEj10IcHJHroq7-RibK_LdRQ/exec?phone=${phoneNumber}`)
         .then(response => response.json())
         .then(data => data.code);
 }
@@ -42,7 +42,7 @@ function generateNewCode() {
 
 function saveUserInfo(fullName, phoneNumber, code) {
     const date = new Date().toLocaleDateString('az-AZ');
-    return fetch('https://script.google.com/macros/s/AKfycbzVK55eIuHdTUxPm2RzZ83H3zlRmDHW7Z-R_J4WtFNSYOEKqJJVSwOC4gFYDKugK1S2mA/exec', {
+    return fetch('https://script.google.com/macros/s/AKfycbzV-281Aw6Fm5XTZ2WL0OeSPXFJ8dOvuCZf0hzymY9nYMmEj10IcHJHroq7-RibK_LdRQ/exec', {
         method: 'POST',
         body: new URLSearchParams({
             'full-name': fullName,
