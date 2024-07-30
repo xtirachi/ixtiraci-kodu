@@ -93,7 +93,7 @@ function generatePDF(fullName, phoneNumber, code, isNew) {
         const link = document.createElement('a');
         link.href = pdfOutput;
         link.download = 'ixtiraçi_kodu.pdf';
-        link.textContent = 'PDF-i Yüklə';
+        link.textContent = 'İxtiraçı sertifikatını Yüklə';
         link.style.display = 'block';
         link.style.marginTop = '10px';
         resultDiv.appendChild(link);
