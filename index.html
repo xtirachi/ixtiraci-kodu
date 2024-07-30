@@ -29,6 +29,38 @@
             border-radius: 10px;
             background-color: #f5f5dc; /* Softer creamy background */
         }
+        .certificate-container {
+            width: 400px;
+            padding: 20px;
+            background-color: #f5f5dc;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            font-family: 'Arial', sans-serif;
+        }
+        .certificate-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .certificate-header img {
+            width: 60px;
+        }
+        .certificate-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .certificate-content p {
+            margin: 5px 0;
+        }
+        .certificate-content p strong {
+            font-weight: bold;
+        }
+        .download-button {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
@@ -49,7 +81,7 @@
         <div id="result" class="mt-4"></div>
         <div id="certificate">
             <img id="certificateImage" alt="Certificate Image">
-            <a id="downloadLink" class="mt-4 inline-block bg-green-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-600" download="ixtiraçi_sertifikatı.png">İxtiraçı sertifikatını yüklə</a>
+            <a id="downloadLink" class="mt-4 inline-block bg-green-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-600 download-button" download="ixtiraçi_sertifikatı.png">İxtiraçı sertifikatını yüklə</a>
         </div>
     </div>
     <div id="popup">İxtiraçı sertifikatınız hazırlanır, zəhmət olmasa gözləyin!</div>
