@@ -83,6 +83,12 @@ function generateCertificate(fullName, phoneNumber, code, isNew) {
     `;
     document.body.appendChild(certificateDiv);
 
+    // Get device width and set dynamic size for the certificate
+    const deviceWidth = window.innerWidth;
+    const maxWidth = deviceWidth < 450 ? deviceWidth - 20 : 450;
+
+    certificateDiv.style.width = `${maxWidth}px`;
+
     html2canvas(certificateDiv, { logging: true, useCORS: true }).then(canvas => {
         const imgData = canvas.toDataURL('image/png');
 
