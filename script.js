@@ -88,9 +88,14 @@ function generateCertificate(fullName, phoneNumber, code, isNew) {
     html2canvas(certificateDiv).then(canvas => {
         const imgData = canvas.toDataURL('image/png');
         document.getElementById('certificateImage').src = imgData;
-        document.getElementById('downloadLink').href = imgData;
+        const downloadLink = document.getElementById('downloadLink');
+        downloadLink.href = imgData;
+        downloadLink.download = `ixtiraçi_sertifikatı_${phoneNumber}.png`;
         document.getElementById('certificate').style.display = 'block';
         hidePopup();
         document.body.removeChild(certificateDiv);
+    }).catch(error => {
+        console.error('Error generating certificate:', error);
+        hidePopup();
     });
 }
