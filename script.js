@@ -2,16 +2,15 @@ document.getElementById('registrationForm').addEventListener('submit', function 
     e.preventDefault();
     const fullName = document.getElementById('fullName').value;
     const phoneNumber = document.getElementById('phoneNumber').value;
-
-    alert('İxtiraçı sertifikatınız hazırlanır, zəhmət olmasa gözləyin!');
+    document.getElementById('popup').style.display = 'block';
 
     checkPhoneNumber(phoneNumber).then(existingCode => {
         if (existingCode) {
-            generateCertificate(fullName, phoneNumber, existingCode, false);
+            generateImage(fullName, phoneNumber, existingCode, false);
         } else {
             const newCode = generateNewCode();
             saveUserInfo(fullName, phoneNumber, newCode).then(() => {
-                generateCertificate(fullName, phoneNumber, newCode, true);
+                generateImage(fullName, phoneNumber, newCode, true);
             });
         }
     });
@@ -43,32 +42,65 @@ function saveUserInfo(fullName, phoneNumber, code) {
     }).then(response => response.json());
 }
 
-function generateCertificate(fullName, phoneNumber, code, isNew) {
-    const certificateContainer = document.createElement('div');
-    certificateContainer.style.width = '800px';
-    certificateContainer.style.height = '600px';
-    certificateContainer.style.padding = '20px';
-    certificateContainer.style.border = '1px solid #000';
-    certificateContainer.style.backgroundColor = '#fff';
-    certificateContainer.style.position = 'relative';
-    certificateContainer.innerHTML = `
-        <div style="text-align: center; font-weight: bold; font-size: 24px; margin-bottom: 20px;">İxtiraçı Kodunu Öyrən</div>
-        <div style="margin-bottom: 10px;">Ad Soyad Ata adı: ${fullName}</div>
-        <div style="margin-bottom: 10px;">Telefon nömrəsi: ${phoneNumber}</div>
-        <div style="margin-bottom: 10px;">İxtiraçı kodu: ${code}</div>
-        <div style="margin-top: 20px;">${isNew ? 'İxtiraçılar klubuna xoş gəldin! Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.' : 'Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.'}</div>
-        <img src="https://i.ibb.co/7XNQPGC/logo.png" style="width: 100px; position: absolute; bottom: 20px; left: 20px;">
-    `;
+function generateImage(fullName, phoneNumber, code, isNew) {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const idWidth = 500;
+    const idHeight = 300;
 
-    document.getElementById('result').innerHTML = '';
-    document.getElementById('result').appendChild(certificateContainer);
+    // Set canvas dimensions
+    canvas.width = idWidth;
+    canvas.height = idHeight;
 
-    html2canvas(certificateContainer).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const imgElement = document.createElement('img');
-        imgElement.src = imgData;
-        imgElement.style.maxWidth = '100%';
-        imgElement.style.marginTop = '20px';
-        document.getElementById('result').appendChild(imgElement);
-    });
+    // Load background image
+    const background = new Image();
+    background.src = 'https://i.ibb.co/jHG1Sh4/id-background.png'; // Use an appropriate ID background image URL
+    background.onload = function () {
+        ctx.drawImage(background, 0, 0, idWidth, idHeight);
+
+        // Draw logo
+        const logo = new Image();
+        logo.src = 'https://i.ibb.co/7XNQPGC/logo.png';
+        logo.onload = function () {
+            ctx.drawImage(logo, 20, 20, 100, 50);
+
+            // Draw text
+            ctx.font = '20px Arial';
+            ctx.fillStyle = '#000';
+            ctx.fillText('İxtiraçı Kodunu Öyrən', 150, 40);
+            ctx.font = '16px Arial';
+            ctx.fillText(`Ad Soyad Ata adı: ${fullName}`, 20, 100);
+            ctx.fillText(`Telefon nömrəsi: ${phoneNumber}`, 20, 130);
+            ctx.fillText(`İxtiraçı kodu: ${code}`, 20, 160);
+
+            const message = isNew
+                ? 'İxtiraçılar klubuna xoş gəldin! Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.'
+                : 'Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.';
+            ctx.fillText(message, 20, 190, idWidth - 40);
+
+            // Convert canvas to image and display it
+            const dataURL = canvas.toDataURL('image/png');
+            const img = new Image();
+            img.src = dataURL;
+            img.alt = 'İxtiraçı Sertifikatı';
+            img.style.width = '100%';
+            img.style.height = 'auto';
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '';
+            resultDiv.appendChild(img);
+
+            // Create download link
+            const link = document.createElement('a');
+            link.href = dataURL;
+            link.download = 'ixtiraci_sertifikati.png';
+            link.textContent = 'İxtiraçı sertifikatını yüklə';
+            link.style.display = 'block';
+            link.style.marginTop = '10px';
+            resultDiv.appendChild(link);
+
+            // Hide popup
+            document.getElementById('popup').style.display = 'none';
+        };
+    };
 }
