@@ -41,14 +41,14 @@
             border: 2px solid #eee;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: left;
+            text-align: center;
             font-family: 'Arial', sans-serif;
             position: relative;
             margin: auto;
+            height: 450px; /* Make it square */
         }
         .certificate-header {
-            text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             position: relative;
         }
         .certificate-header img {
@@ -59,10 +59,8 @@
             transform: translateX(-50%);
         }
         .certificate-title {
-            text-align: center;
             font-size: 24px;
             font-weight: bold;
-            margin-bottom: 20px;
             color: #333;
             margin-top: 80px; /* Adjust for logo */
         }
@@ -70,6 +68,7 @@
             font-size: 16px;
             line-height: 1.5;
             color: #333;
+            text-align: left;
         }
         .certificate-content p {
             margin: 10px 0;
@@ -92,6 +91,8 @@
         @media (max-width: 640px) {
             .certificate-container {
                 padding: 10px;
+                height: 100vw; /* Ensure it's a square */
+                width: 100vw;
             }
             .certificate-header img {
                 width: 50px;
@@ -99,6 +100,7 @@
             }
             .certificate-title {
                 font-size: 20px;
+                margin-top: 60px; /* Adjust for logo */
             }
             .certificate-content {
                 font-size: 14px;
