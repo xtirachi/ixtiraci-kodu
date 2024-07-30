@@ -9,15 +9,25 @@
         #popup {
             display: none;
             position: fixed;
-            z-index: 1000;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.7);
             color: #fff;
+            padding: 20px;
             border-radius: 10px;
             text-align: center;
+            z-index: 1000;
+        }
+        #certificate {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+        #certificate img {
+            border: 1px solid #000;
+            border-radius: 10px;
+            background-color: #f5f5dc; /* Softer creamy background */
         }
     </style>
 </head>
@@ -37,9 +47,13 @@
             <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-md shadow-sm hover:bg-blue-600">Göndər</button>
         </form>
         <div id="result" class="mt-4"></div>
-        <div id="popup">İxtiraçı sertifikatınız hazırlanır, zəhmət olmasa gözləyin!</div>
+        <div id="certificate">
+            <img id="certificateImage" alt="Certificate Image">
+            <a id="downloadLink" class="mt-4 inline-block bg-green-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-600" download="ixtiraçi_sertifikatı.png">İxtiraçı sertifikatını yüklə</a>
+        </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <div id="popup">İxtiraçı sertifikatınız hazırlanır, zəhmət olmasa gözləyin!</div>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
