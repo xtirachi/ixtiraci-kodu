@@ -54,7 +54,7 @@ function generateImage(fullName, phoneNumber, code, isNew) {
 
     // Load background image
     const background = new Image();
-    background.src = 'https://ibb.co/G96Nn1Q/id-background.png'; // Use an appropriate ID background image URL
+    background.src = 'https://ibb.co/G96Nn1Q/id-background.png'; // Ensure this image URL is correct and accessible
     background.onload = function () {
         ctx.drawImage(background, 0, 0, idWidth, idHeight);
 
@@ -76,7 +76,7 @@ function generateImage(fullName, phoneNumber, code, isNew) {
             const message = isNew
                 ? 'İxtiraçılar klubuna xoş gəldin! Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.'
                 : 'Sən artıq İxtiraçı üzvüsən. Virtual Səyahətlərin zamanı İxtiraçı kodu sənə lazım olacaq! Bu məlumatları telefonunun yaddaşında saxlaya bilərsən.';
-            ctx.fillText(message, 20, 190, idWidth - 40);
+            wrapText(ctx, message, 20, 190, idWidth - 40, 20);
 
             // Convert canvas to image and display it
             const dataURL = canvas.toDataURL('image/png');
@@ -103,4 +103,23 @@ function generateImage(fullName, phoneNumber, code, isNew) {
             document.getElementById('popup').style.display = 'none';
         };
     };
+}
+
+// Function to wrap text within a specified width
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+    const words = text.split(' ');
+    let line = '';
+    for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        const metrics = ctx.measureText(testLine);
+        const testWidth = metrics.width;
+        if (testWidth > maxWidth && n > 0) {
+            ctx.fillText(line, x, y);
+            line = words[n] + ' ';
+            y += lineHeight;
+        } else {
+            line = testLine;
+        }
+    }
+    ctx.fillText(line, x, y);
 }
