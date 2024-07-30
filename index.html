@@ -45,6 +45,7 @@
             font-family: 'Arial', sans-serif;
             position: relative;
             margin: auto;
+            height: 450px; /* Make it square */
         }
         .certificate-header {
             text-align: center;
@@ -55,7 +56,8 @@
             width: 60px;
             position: absolute;
             top: 10px;
-            left: 10px;
+            left: 50%;
+            transform: translateX(-50%);
         }
         .certificate-title {
             text-align: center;
@@ -63,6 +65,7 @@
             font-weight: bold;
             margin-bottom: 20px;
             color: #333;
+            margin-top: 80px; /* Adjust for logo */
         }
         .certificate-content {
             font-size: 16px;
@@ -90,18 +93,18 @@
         @media (max-width: 640px) {
             .certificate-container {
                 padding: 10px;
-                font-size: 12px;
+                height: 100vw; /* Ensure it's a square */
+                width: 100vw;
             }
             .certificate-header img {
                 width: 50px;
                 top: 5px;
-                left: 5px;
             }
             .certificate-title {
-                font-size: 18px;
+                font-size: 20px;
             }
             .certificate-content {
-                font-size: 12px;
+                font-size: 14px;
             }
         }
     </style>
