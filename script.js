@@ -9,9 +9,11 @@ document.getElementById('registrationForm').addEventListener('submit', function 
         if (existingCode) {
             generateCertificate(fullName, phoneNumber, existingCode, false);
         } else {
-            const newCode = generateNewCode();
-            saveUserInfo(fullName, phoneNumber, newCode).then(() => {
-                generateCertificate(fullName, phoneNumber, newCode, true);
+            getMaxCode().then(maxCode => {
+                const newCode = maxCode + 1;
+                saveUserInfo(fullName, phoneNumber, newCode).then(() => {
+                    generateCertificate(fullName, phoneNumber, newCode, true);
+                });
             });
         }
     });
@@ -29,7 +31,7 @@ function hidePopup() {
 
 function checkPhoneNumber(phoneNumber) {
     console.log(`Checking phone number: ${phoneNumber}`);
-    return fetch(`https://script.google.com/macros/s/AKfycbz6BmpKtm7KkYxFg08bhDNaL6CL6JbVcTkgS0KN9RXB6CnA1bW77HxcaqbfG4tYAWBAIw/exec?phone=${encodeURIComponent(phoneNumber)}`)
+    return fetch(`https://script.google.com/macros/s/AKfycbwFkPt0VNRoXCvBbU2MU8368kqyT_-Rm5AfPyBueBSrc6d6UFIb62zZ0Hq2v4uZ4mM44g/exec?phone=${encodeURIComponent(phoneNumber)}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -45,16 +47,27 @@ function checkPhoneNumber(phoneNumber) {
         });
 }
 
-function generateNewCode() {
-    const lastCode = localStorage.getItem('lastCode') || 1000;
-    const newCode = parseInt(lastCode) + 1;
-    localStorage.setItem('lastCode', newCode);
-    return newCode;
+function getMaxCode() {
+    console.log('Fetching max code');
+    return fetch('https://script.google.com/macros/s/AKfycbwFkPt0VNRoXCvBbU2MU8368kqyT_-Rm5AfPyBueBSrc6d6UFIb62zZ0Hq2v4uZ4mM44g/exec?maxCode=true')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Max code:', data.maxCode);
+            return data.maxCode;
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+        });
 }
 
 function saveUserInfo(fullName, phoneNumber, code) {
     const date = new Date().toLocaleDateString('az-AZ');
-    return fetch('https://script.google.com/macros/s/AKfycbz6BmpKtm7KkYxFg08bhDNaL6CL6JbVcTkgS0KN9RXB6CnA1bW77HxcaqbfG4tYAWBAIw/exec', {
+    return fetch('https://script.google.com/macros/s/AKfycbwFkPt0VNRoXCvBbU2MU8368kqyT_-Rm5AfPyBueBSrc6d6UFIb62zZ0Hq2v4uZ4mM44g/exec', {
         method: 'POST',
         body: new URLSearchParams({
             'full-name': fullName,
