@@ -115,3 +115,11 @@ function generateCertificate(fullName, phoneNumber, code, isNew) {
         hidePopup();
     });
 }
+ const downloadLink = document.getElementById('downloadLink');
+        downloadLink.href = imgData;
+        downloadLink.download = `ixtiraçi_sertifikatı_${phoneNumber}.png`;
+    }).catch(error => {
+        console.error('Error generating certificate:', error);
+        hidePopup();
+    });
+}
