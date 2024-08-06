@@ -16,9 +16,6 @@ document.getElementById('registrationForm').addEventListener('submit', function 
                 });
             });
         }
-    }).catch(error => {
-        console.error('Error checking phone number:', error);
-        hidePopup();
     });
 });
 
@@ -105,7 +102,6 @@ function generateCertificate(fullName, phoneNumber, code, isNew) {
     html2canvas(certificateDiv, { logging: true, useCORS: true }).then(canvas => {
         const imgData = canvas.toDataURL('image/png');
 
-        // Update the certificate image and download link
         const certificateImage = document.getElementById('certificateImage');
         certificateImage.src = imgData;
         const downloadLink = document.getElementById('downloadLink');
