@@ -94,7 +94,10 @@ function generateCertificate(fullName, phoneNumber, code, isNew) {
             </div>
         </div>
     `;
-    document.body.appendChild(certificateDiv);
+
+    document.getElementById('certificate').style.display = 'block';
+    const certificateContainer = document.getElementById('certificate');
+    certificateContainer.innerHTML = certificateDiv.innerHTML;
 
     html2canvas(certificateDiv, { logging: true, useCORS: true }).then(canvas => {
         const imgData = canvas.toDataURL('image/png');
@@ -102,15 +105,11 @@ function generateCertificate(fullName, phoneNumber, code, isNew) {
         // Update the certificate image and download link
         const certificateImage = document.getElementById('certificateImage');
         certificateImage.src = imgData;
-        certificateImage.onload = () => {
-            document.getElementById('certificate').style.display = 'block';
-            hidePopup();
-            document.body.removeChild(certificateDiv);
-        };
-
         const downloadLink = document.getElementById('downloadLink');
         downloadLink.href = imgData;
         downloadLink.download = `ixtiraçi_sertifikatı_${phoneNumber}.png`;
+
+        hidePopup();
     }).catch(error => {
         console.error('Error generating certificate:', error);
         hidePopup();
