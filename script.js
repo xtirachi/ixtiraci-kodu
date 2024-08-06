@@ -16,6 +16,9 @@ document.getElementById('registrationForm').addEventListener('submit', function 
                 });
             });
         }
+    }).catch(error => {
+        console.error('Error checking phone number:', error);
+        hidePopup();
     });
 });
 
@@ -110,14 +113,6 @@ function generateCertificate(fullName, phoneNumber, code, isNew) {
         downloadLink.download = `ixtiraçi_sertifikatı_${phoneNumber}.png`;
 
         hidePopup();
-    }).catch(error => {
-        console.error('Error generating certificate:', error);
-        hidePopup();
-    });
-}
- const downloadLink = document.getElementById('downloadLink');
-        downloadLink.href = imgData;
-        downloadLink.download = `ixtiraçi_sertifikatı_${phoneNumber}.png`;
     }).catch(error => {
         console.error('Error generating certificate:', error);
         hidePopup();
